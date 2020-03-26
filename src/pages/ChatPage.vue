@@ -48,19 +48,19 @@ export default {
           messages: [
               {
                   text: 'Hey du!',
-                  from: 'me'
-              },
-              {
-                  text: 'Hello, was geht bei dir',
                   from: 'them'
               },
               {
-                  text: 'Danke gut und usw',
+                  text: 'Hello, was geht bei dir',
                   from: 'me'
               },
               {
+                  text: 'Danke gut und usw',
+                  from: 'them'
+              },
+              {
                   text: 'Was sonst',
-                  from: 'me'
+                  from: 'them'
               }
           ]
       }
@@ -68,10 +68,13 @@ export default {
   },
     methods: {
       sendMessage() {
+          if (this.newMessage != ''){
           this.messages.push({
               text: this.newMessage,
               from: 'me'
           })
+              this.newMessage = ''
+          }
       }
     }
 }
