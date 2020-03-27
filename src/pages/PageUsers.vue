@@ -43,7 +43,7 @@
             return {
                  users: [ {
                     id: 1,
-                    name: 'Peter',
+                    name: 'Global',
                     online:true
                 }, {
                     id: 2,
@@ -52,7 +52,7 @@
                  }, {
                     id: 3,
                     name: 'Paul',
-                     online:true
+                     online:false
                  }]
             }
         }
