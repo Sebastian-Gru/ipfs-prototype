@@ -122,34 +122,6 @@ export default {
 
                 return { allMessages: newMessages }
 
-        },
-
-        nameServiceHandler(msg) {
-            let senderID = msg.from;
-            let senderName = msg.data.toString();
-
-
-                let peers = this.peers.slice();
-                peers.forEach(peer => {
-                    if (peer.name == '' && peer.nodeid == senderID) {
-                        peer.name = senderName;
-                    }
-                });
-                return { peers }
-
-        },
-
-        mapNodeIDToName(nodeid) {
-            let {peers} = this.state;
-            for (let i = peers.length - 1; i >= 0; i--) {
-                if (peers[i]['nodeid'] == nodeid && peers[i]['name'].length > 0) return peers[i]['name']
-            }
-            return nodeid;;
-        },
-        lastFive(string){
-            if(string.length > 5){
-                return string.slice(string.length - 5);
-            } else return string;
         }
 
     },
