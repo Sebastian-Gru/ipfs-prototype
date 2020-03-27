@@ -1,19 +1,19 @@
 <template>
   <q-page class="flex column">
     <div class="q-pa-md column col justify-end">
-      <q-chat-message
-        v-for="message in messages"
-        :key="message.text"
-        :name="message.from"
-        :text="[message.text]"
-        :sent=" message.from == 'me'? true: false "
-      />
+<!--      <q-chat-message-->
+<!--        v-for="message in messages"-->
+<!--        :key="message.text"-->
+<!--        :name="message.from"-->
+<!--        :text="[message.text]"-->
+<!--        :sent=" message.from == 'me'? true: false "-->
+<!--      />-->
       <q-chat-message
         v-for="message in allMessages['global']"
-        :key="message.data"
+        :key="message.data + Math.random()"
         :name="message.from"
         :text="[message.data]"
-        :sent=" message.from == 'me'? true: false "
+        :sent=" message.from == myID? true: false "
       />
 
     </div>
@@ -99,15 +99,15 @@ export default {
 
         //New Messages
 
-        scrollDownTheMsgs(){
-            setTimeout(() => {
-                let msgContainer = document.getElementsByClassName('msg-container')[0];
-                msgContainer.scrollTop = msgContainer.scrollHeight;
-            }, 200)
-        },
+        // scrollDownTheMsgs(){
+        //     setTimeout(() => {
+        //         let msgContainer = document.getElementsByClassName('msg-container')[0];
+        //         msgContainer.scrollTop = msgContainer.scrollHeight;
+        //     }, 200)
+        // },
         globalMsgHandler(msg) {
             // console.log('globalMsgHandler received', msg.data.toString(), 'from', msg.from)
-            this.scrollDownTheMsgs();
+           // this.scrollDownTheMsgs();
 
                 let newMessages = Object.assign({}, this.allMessages);
                 let currentDate = new Date();
@@ -128,15 +128,15 @@ export default {
             let senderID = msg.from;
             let senderName = msg.data.toString();
 
-            this.setState(oldState => {
-                let peers = oldState.peers.slice();
+
+                let peers = this.peers.slice();
                 peers.forEach(peer => {
                     if (peer.name == '' && peer.nodeid == senderID) {
                         peer.name = senderName;
                     }
-                })
+                });
                 return { peers }
-            });
+
         },
 
         mapNodeIDToName(nodeid) {

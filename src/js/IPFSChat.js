@@ -42,6 +42,7 @@ function IPFSChat() {
 
 		return `https://ipfs.io/ipfs/${filesAdded[0].hash}`;
     }
+
     function getID(callback) {
         return new Promise((resolve, reject) => {
 
