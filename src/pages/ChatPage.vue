@@ -16,8 +16,16 @@
         :width="200"
         :breakpoint="700"
         elevated
-        content-class="bg-primary text-white"
+        content-class="bg-white text-white"
       >
+        <q-input
+          v-model="myName"
+          bg-color="white"
+          outlined
+          rounded
+          label="Mein Name"
+          dense>
+        </q-input>
         <q-scroll-area class="fit">
           <div class="q-pa-sm">
             <q-list
@@ -28,23 +36,23 @@
                 :key="p.nodeid"
                 to="/chat"
                 clickable v-ripple>
-                <q-item-section avatar>
-                  <q-avatar color="primary" text-color="white">
-                    {{ p.name.charAt(0) }}
-                  </q-avatar>
-                </q-item-section>
+<!--                <q-item-section avatar>-->
+<!--                  <q-avatar color="primary" text-color="white">-->
+<!--                    {{ p.name.charAt(0) }}-->
+<!--                  </q-avatar>-->
+<!--                </q-item-section>-->
 
                 <q-item-section>
-                  <q-item-label>{{ p.nodeid }}</q-item-label>
+                  <q-item-label>{{ p }}</q-item-label>
                 </q-item-section>
 
-                <q-item-section side>
-                  <q-badge
-                    :color="p.online ? 'light-green-5' : 'grey-4'">
-                    {{ p.online ? 'Online': 'Offline' }}
-                  </q-badge>
+<!--                <q-item-section side>-->
+<!--                  <q-badge-->
+<!--                    :color="p.online ? 'light-green-5' : 'grey-4'">-->
+<!--                    {{ p.online ? 'Online': 'Offline' }}-->
+<!--                  </q-badge>-->
 
-                </q-item-section>
+<!--                </q-item-section>-->
               </q-item>
 
 
@@ -134,7 +142,7 @@
               nodeid: 123,
               name:"Global",
               online: true
-          },
+          }
 
           ],
           selectedPeer: 'global',
@@ -240,8 +248,8 @@
                     if (peer.name == '' && peer.nodeid == senderID) {
                         peer.name = senderName;
                     }
-                })
-                return { peers }
+                });
+                this.peers = peers;
 
         },
 
@@ -312,7 +320,7 @@
             })
             .then(() => {
                 this.IPFSChatInstance.newSubscribe('global', this.globalMsgHandler)
-                this.IPFSChatInstance.newSubscribe('name-service', this.nameServiceHandler)
+                this.IPFSChatInstance.newSubscribe('name-servicex1xy', this.nameServiceHandler)
                 this.IPFSChatInstance.newSubscribe('private-chat', this.privateChatHandler)
             });
     },
@@ -326,9 +334,9 @@
 
                         //if i have no peers accept everything
                         if (this.peers.length == 0)
-                            return {
-                                peers: peersComing.map(peerID => ({ name: '', nodeid: peerID }))
-                            }
+
+                                this.peers =  peersComing.map(peerID => ({ name: '', nodeid: peerID }))
+
 
                         //else i have peers and i am not gonna empty them => adding the new ones only.
                         let existingPeers = this.peers.slice();
@@ -341,10 +349,10 @@
                         });
                        // console.log("existingPeers: "+existingPeers);
                     //this.peers.push(existingPeers);
-                    console.log("Peers:"+ this.peers.name);
-                        return {
-                            peers: existingPeers
-                        }
+
+
+                            this.peers = existingPeers;
+
 
                 }
 
@@ -353,10 +361,10 @@
             console.warn(error);
         }
 
-        // setInterval(() => {
-        //     if (this.myName)
-        //         this.IPFSChatInstance.sendNewMsg('name-service', this.state.myName)
-        // }, 5000)
+        setInterval(() => {
+            if (this.myName)
+                this.IPFSChatInstance.sendNewMsg('name-service', this.myName)
+        }, 5000)
     }
 }
 </script>
