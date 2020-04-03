@@ -135,7 +135,7 @@
               }
           ],
           //New Variables
-          myName: 'Test',
+          myName: '',
           myID: '',
           currentMsg: '',
           peers: [{
