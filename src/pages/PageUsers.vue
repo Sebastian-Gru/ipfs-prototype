@@ -40,10 +40,12 @@
 
     export default {
         computed: {
-            userList: {
-                get () {
-                    return this.$store.state.DataStore.userList
-                }}
+            // userList: {
+            //     get () {
+            //         return this.$store.state.DataStore.userList
+            //     }}
+
+            ...mapGetters({userList: 'DataStore/userListGetter'})
         }
     }
 

@@ -1,6 +1,8 @@
 
-export function someGetter (state) {
-  userList: state => state.userList
+export function userListGetter (state) {
+
+     return state.userList
+
 }
 
 
