@@ -217,26 +217,26 @@
         //         msgContainer.scrollTop = msgContainer.scrollHeight;
         //     }, 200)
         // },
-        globalMsgHandler(msg) {
-
-            // console.log('globalMsgHandler received', msg.data.toString(), 'from', msg.from)
-           // this.scrollDownTheMsgs();
-                console.log("MSG: "+ msg);
-                let newMessages = Object.assign({}, this.allMessages);
-                let currentDate = new Date();
-                let dateString = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}    ${currentDate.getHours()}:${currentDate.getMinutes()}`;
-
-                newMessages['global'].push({
-                    from: msg.from,
-                    data: msg.data.toString(),
-                    date: dateString
-                });
-
-                this.allMessages = newMessages;
-                console.log(newMessages);
-                return { allMessages: newMessages }
-
-        },
+        // globalMsgHandler(msg) {
+        //
+        //     // console.log('globalMsgHandler received', msg.data.toString(), 'from', msg.from)
+        //    // this.scrollDownTheMsgs();
+        //         console.log("MSG: "+ msg);
+        //         let newMessages = Object.assign({}, this.allMessages);
+        //         let currentDate = new Date();
+        //         let dateString = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}    ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+        //
+        //         newMessages['global'].push({
+        //             from: msg.from,
+        //             data: msg.data.toString(),
+        //             date: dateString
+        //         });
+        //
+        //         this.allMessages = newMessages;
+        //         console.log(newMessages);
+        //         return { allMessages: newMessages }
+        //
+        // },
         mapNodeIDToName(nodeid) {
             let {peers} = this.peers;
             for (let i = peers.length - 1; i >= 0; i--) {
@@ -245,81 +245,80 @@
             return nodeid;
         },
 
-        nameServiceHandler(msg) {
-            let senderID = msg.from;
-            let senderName = msg.data.toString();
+        // nameServiceHandler(msg) {
+        //     let senderID = msg.from;
+        //     let senderName = msg.data.toString();
+        //
+        //
+        //         let peers = this.peers.slice();
+        //         peers.forEach(peer => {
+        //             if (peer.name == '' && peer.nodeid == senderID) {
+        //                 peer.name = senderName;
+        //             }
+        //         });
+        //         this.peers = peers;
+        //
+        // },
 
-
-                let peers = this.peers.slice();
-                peers.forEach(peer => {
-                    if (peer.name == '' && peer.nodeid == senderID) {
-                        peer.name = senderName;
-                    }
-                });
-                this.peers = peers;
-
-        },
-
-        privateChatHandler(msg){
-            let senderID = msg.from;
-            let data = msg.data.toString();
-            let receiverID = data.split(':')[0];
-            let theMsg = data.slice(data.split(':')[0].length+1)
-
-            const {myID} = this.myID;
-
-            // if someone send a message for me
-            if(receiverID && theMsg && receiverID == myID){
-
-
-                    let existingAllMessags = Object.assign({}, this.allMessages);
-
-                    if(!existingAllMessags[senderID])
-                        existingAllMessags[senderID]=[];
-
-                    let currentDate = new Date();
-                    let dateString = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}    ${currentDate.getHours()}:${currentDate.getMinutes()}`;
-
-                    existingAllMessags[senderID].push({
-                        from: this.mapNodeIDToName(senderID),
-                        data: theMsg,
-                        date: dateString,
-                        mine: false
-                    });
-
-                    return {allMessages: existingAllMessags};
-
-            }
-
-            // if i'm the sender
-            else if(receiverID && theMsg && senderID == myID){
-
-
-
-                    let existingAllMessags = Object.assign({}, this.allMessages);
-
-                    if(!existingAllMessags[receiverID])
-                        existingAllMessags[receiverID]=[];
-
-                    let currentDate = new Date();
-                    let dateString = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}    ${currentDate.getHours()}:${currentDate.getMinutes()}`;
-
-                    existingAllMessags[receiverID].push({
-                        from: this.mapNodeIDToName(receiverID),
-                        data: theMsg,
-                        date: dateString,
-                        mine: true
-                    });
-
-                    return {allMessages: existingAllMessags};
-
-
-            }
-        }
+        // privateChatHandler(msg){
+        //     let senderID = msg.from;
+        //     let data = msg.data.toString();
+        //     let receiverID = data.split(':')[0];
+        //     let theMsg = data.slice(data.split(':')[0].length+1)
+        //
+        //     const {myID} = this.myID;
+        //
+        //     // if someone send a message for me
+        //     if(receiverID && theMsg && receiverID == myID){
+        //
+        //
+        //             let existingAllMessags = Object.assign({}, this.allMessages);
+        //
+        //             if(!existingAllMessags[senderID])
+        //                 existingAllMessags[senderID]=[];
+        //
+        //             let currentDate = new Date();
+        //             let dateString = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}    ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+        //
+        //             existingAllMessags[senderID].push({
+        //                 from: this.mapNodeIDToName(senderID),
+        //                 data: theMsg,
+        //                 date: dateString,
+        //                 mine: false
+        //             });
+        //
+        //             return {allMessages: existingAllMessags};
+        //
+        //     }
+        //
+        //     // if i'm the sender
+        //     else if(receiverID && theMsg && senderID == myID){
+        //
+        //
+        //
+        //             let existingAllMessags = Object.assign({}, this.allMessages);
+        //
+        //             if(!existingAllMessags[receiverID])
+        //                 existingAllMessags[receiverID]=[];
+        //
+        //             let currentDate = new Date();
+        //             let dateString = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}    ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+        //
+        //             existingAllMessags[receiverID].push({
+        //                 from: this.mapNodeIDToName(receiverID),
+        //                 data: theMsg,
+        //                 date: dateString,
+        //                 mine: true
+        //             });
+        //
+        //             return {allMessages: existingAllMessags};
+        //
+        //
+        //     }
+        // }
 
     },
     created(){
-      console.log("!!!!!!!!!!"+ this.allMessages['global'].data);
         // this.IPFSChatInstance = new IPFSChat();
         //
         // this.IPFSChatInstance.getID()

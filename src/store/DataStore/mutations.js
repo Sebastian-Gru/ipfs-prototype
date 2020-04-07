@@ -33,4 +33,10 @@ export const messageCommiter = (state, message) => {
 }
 
 
+export const peerName = (state, peers) => {
+  state.peers = peers;
+}
+
+
+
 

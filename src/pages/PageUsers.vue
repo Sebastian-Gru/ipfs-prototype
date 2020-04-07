@@ -6,8 +6,10 @@
       <q-item
         v-for="user in peers "
         :key="user.nodeid"
+        @click="test123(user.nodeid)"
         to="/chat"
-        clickable v-ripple>
+        clickable v-ripple
+        >
         <q-item-section avatar>
           <q-avatar color="primary" text-color="white">
             {{ user.name? user.name[0] :user.nodeid[0] }}
@@ -120,6 +122,11 @@
                 this.myName = this.name;
                 this.name = "";
             },
+            test123(x){
+                console.log("User: " + x);
+                alert("Hallo");
+                this.selectedPeer = x;
+            }
         },
         created () {
           if(!this.IPFSChatInstance){
