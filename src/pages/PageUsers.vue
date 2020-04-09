@@ -6,7 +6,8 @@
       <q-item
         v-for="user in peers "
         :key="user.nodeid"
-        @click="test123(user.nodeid)"
+        @click="changePeer(user.nodeid)"
+        @mousedown="changePeer(user.nodeid)"
         to="/chat"
         clickable v-ripple
         >
@@ -21,6 +22,7 @@
         </q-item-section>
 
         <q-item-section side>
+
           <q-badge
             :color="user.online ? 'light-green-5' : 'grey-4'">
             {{ user.online ? 'Online': 'Offline' }}
@@ -28,30 +30,6 @@
 
         </q-item-section>
       </q-item>
-
-<!--      <q-item-->
-<!--                        v-for="p in this.peers"-->
-<!--                        :key="p.nodeid"-->
-<!--                        to="/chat"-->
-<!--                        clickable v-ripple>-->
-<!--                        <q-item-section avatar>-->
-<!--                          <q-avatar color="primary" text-color="white">-->
-<!--                            {{ p.nodeid.charAt(0) }}-->
-<!--                          </q-avatar>-->
-<!--                        </q-item-section>-->
-
-<!--                        <q-item-section>-->
-<!--                          <q-item-label>{{ p.nodeid}}</q-item-label>-->
-<!--                        </q-item-section>-->
-
-<!--        &lt;!&ndash;                <q-item-section side>&ndash;&gt;-->
-<!--        &lt;!&ndash;                  <q-badge&ndash;&gt;-->
-<!--        &lt;!&ndash;                    :color="p.online ? 'light-green-5' : 'grey-4'">&ndash;&gt;-->
-<!--        &lt;!&ndash;                    {{ p.online ? 'Online': 'Offline' }}&ndash;&gt;-->
-<!--        &lt;!&ndash;                  </q-badge>&ndash;&gt;-->
-
-<!--        &lt;!&ndash;                </q-item-section>&ndash;&gt;-->
-<!--      </q-item>-->
 
 
     </q-list>
@@ -64,17 +42,20 @@
       <q-card-section class="q-pt-none">
         {{myID}}
       </q-card-section>
+      <q-card-section class="q-pt-none">
+        <div class="text-h6">Your name: </div>
+        {{myComputedName? myComputedName: "Anonym"}}
+      </q-card-section>
 
       <q-form @submit="onSubmit" class="q-gutter-md ">
         <q-input
           name="name"
           v-model="name"
           color="primary"
-          label="Your Name"
+          :label="myComputedName? 'Change Name' : 'Your Name'"
           filled
           clearable
         />
-
         <div class="float-right " >
           <q-btn label="Submit" type="submit" color="primary"/>
         </div>
@@ -86,10 +67,7 @@
 </template>
 
 <script>
-  import {mapGetters, mapActions} from 'vuex'
-  //import {someAction} from "../store/DataStore/actions";
-
-
+  import {mapGetters, mapActions, mapMutations} from 'vuex'
 
     export default {
       data(){
@@ -98,17 +76,13 @@
           }
       },
         computed: {
-            // userList: {
-            //     get () {
-            //         return this.$store.state.DataStore.userList
-            //     }}
 
             ...mapGetters({
                 IPFSChatInstance: 'DataStore/IPFSChatInstanceGetter',
                 userList: 'DataStore/userListGetter',
                 peers: 'DataStore/peerGetter',
                 myID: 'DataStore/myIDGetter',
-                myName: 'DataStore/myNameGetter'
+                myComputedName: 'DataStore/myNameGetter'
             })
         },
         methods: {
@@ -118,14 +92,19 @@
                 instantiateIPFS: 'DataStore/instantiateIPFS',
                 intervallIPFS: 'DataStore/intervallIPFS'
             }),
+            ...mapMutations({
+              myName: 'DataStore/myNameChange',
+              changeSelectedPeer: 'DataStore/changeSelectedPeer'
+            }),
+
             onSubmit(){
-                this.myName = this.name;
+                if(this.name != "")
+                  this.myName(this.name);
                 this.name = "";
             },
-            test123(x){
+            changePeer(x){
                 console.log("User: " + x);
-                alert("Hallo");
-                this.selectedPeer = x;
+                this.changeSelectedPeer(x);
             }
         },
         created () {
@@ -137,7 +116,6 @@
 
         },
         mounted() {
-
                 this.intervallIPFS();
         }
 

@@ -23,13 +23,19 @@ export function IPFSChatInstanceGetter (state) {
 }
 
 export function myIDGetter(state) {
+
   return state.myID
+
 }
 export function myNameGetter(state) {
+
   return state.myName
+
 }
 export function currentMsgGetter(state) {
+
   return state.currentMsg
+
 }
 export function selectedPeerGetter(state) {
 

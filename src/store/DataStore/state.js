@@ -22,8 +22,8 @@ export default function () {
       ]
     },
     peers: [{
-      nodeid: "Global",
-      name:"GlobalName",
+      nodeid: "global",
+      name:"Global Chat",
       online: true
     }
     ],

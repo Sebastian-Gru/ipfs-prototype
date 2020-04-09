@@ -1,4 +1,5 @@
 import IPFSChat from "src/js/IPFSChat";
+import Notify from "quasar/src/plugins/Notify";
 
 export function someAction ({ commit },context) {
 
@@ -28,8 +29,9 @@ export function instantiateIPFS({commit, state}){
     })
     .then(() => {
       IPFSChatInstance.newSubscribe('global', globalMsgHandler);
-      //Neue Action aufrufen in global message Hanbdler
+      //Neue Action aufrufen in global message Handler
       IPFSChatInstance.newSubscribe('name-service', nameServiceHandler);
+
       IPFSChatInstance.newSubscribe('private-chat', privateChatHandler);
     });
 
@@ -38,41 +40,25 @@ export function instantiateIPFS({commit, state}){
 //Function that receives the messages
   const globalMsgHandler = (msg) =>  {
 
-    // console.log('globalMsgHandler received', msg.data.toString(), 'from', msg.from)
-    // this.scrollDownTheMsgs();
-    console.log("MSG: "+ msg);
-    let newMessages = Object.assign({}, state.allMessages);
-    let currentDate = new Date();
-    let dateString = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}    ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+    commit('messageCommiter', {msg, ns: 'global'});
 
-    newMessages['global'].push({
-      from: msg.from,
-      data: msg.data.toString(),
-      date: dateString
-    });
+    Notify.create({
+      message: `New Message in Global Chat from ${msg.from}:\n ${msg.data.toString()}!`,
+      position: "top-right"
+    })
 
-    commit('messageCommiter', newMessages);
-    // this.allMessages = newMessages;
-    console.log(newMessages);
-   // return { allMessages: newMessages }
 
-  }
+  };
+
+
+
   //Function that receives the names of the peers that have names
  const  nameServiceHandler = (msg) =>  {
-    let senderID = msg.from;
-    let senderName = msg.data.toString();
 
+    //console.log("Peers!!: "+ peers);
+    commit('peerName', msg)
 
-    let peers = state.peers.slice();
-    peers.forEach(peer => {
-      if (peer.name == '' && peer.nodeid == senderID) {
-        peer.name = senderName;
-      }
-    });
-    console.log("Peers!!: "+ peers);
-    commit('peerName', peers)
-
-  }
+  };
 
 
 
@@ -80,6 +66,7 @@ export function instantiateIPFS({commit, state}){
   //private Message Handler
 
   const privateChatHandler = (msg) => {
+    console.log("Private Message incoming");
     let senderID = msg.from;
     let data = msg.data.toString();
     let receiverID = data.split(':')[0];
@@ -106,18 +93,15 @@ export function instantiateIPFS({commit, state}){
         mine: false
       });
 
+      console.log(existingAllMessags);
       commit('messageCommiter', existingAllMessags);
-
-
 
     }
 
     // if i'm the sender
     else if(receiverID && theMsg && senderID == myID){
 
-
-
-      let existingAllMessags = Object.assign({}, this.allMessages);
+      let existingAllMessags = Object.assign({}, state.allMessages);
 
       if(!existingAllMessags[receiverID])
         existingAllMessags[receiverID]=[];
@@ -132,8 +116,9 @@ export function instantiateIPFS({commit, state}){
         mine: true
       });
 
-      commit('messageCommiter', existingAllMessags);
+      console.log(existingAllMessags);
 
+      commit('messageCommiter', existingAllMessags);
 
     }
   }
@@ -190,7 +175,7 @@ export function intervallIPFS({commit, state}) {
   setInterval(() => {
     if (state.myName)
       state.IPFSChatInstance.sendNewMsg('name-service', state.myName)
-  }, 5000)
+  }, 50000)
 
 }
 

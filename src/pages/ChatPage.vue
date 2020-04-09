@@ -2,71 +2,9 @@
 <template>
 
   <q-page class="flex column">
-<!--    <q-header >-->
-<!--      <q-toolbar>-->
-<!--        <q-btn flat @click="drawerLeft = !drawerLeft" round dense icon="menu" />-->
-<!--        <q-toolbar-title>Header</q-toolbar-title>-->
-<!--      </q-toolbar>-->
-<!--    </q-header>-->
 
     <div class="q-pa-md column col justify-end">
-<!--      <q-drawer-->
-<!--        v-model="drawerLeft"-->
-<!--        show-if-above-->
-<!--        :width="200"-->
-<!--        :breakpoint="700"-->
-<!--        elevated-->
-<!--        content-class="bg-white text-white"-->
-<!--      >-->
-<!--        <q-input-->
-<!--          v-model="myName"-->
-<!--          bg-color="white"-->
-<!--          outlined-->
-<!--          rounded-->
-<!--          label="Mein Name"-->
-<!--          dense>-->
-<!--        </q-input>-->
-<!--        <q-scroll-area class="fit">-->
-<!--          <div class="q-pa-sm">-->
-<!--            <q-list-->
-<!--              class="full-width"-->
-<!--              separator>-->
-<!--              <q-item-->
-<!--                v-for="p in peers"-->
-<!--                :key="p.nodeid"-->
-<!--                to="/chat"-->
-<!--                clickable v-ripple>-->
-<!--&lt;!&ndash;                <q-item-section avatar>&ndash;&gt;-->
-<!--&lt;!&ndash;                  <q-avatar color="primary" text-color="white">&ndash;&gt;-->
-<!--&lt;!&ndash;                    {{ p.name.charAt(0) }}&ndash;&gt;-->
-<!--&lt;!&ndash;                  </q-avatar>&ndash;&gt;-->
-<!--&lt;!&ndash;                </q-item-section>&ndash;&gt;-->
 
-<!--                <q-item-section>-->
-<!--                  <q-item-label>{{ p }}</q-item-label>-->
-<!--                </q-item-section>-->
-
-<!--&lt;!&ndash;                <q-item-section side>&ndash;&gt;-->
-<!--&lt;!&ndash;                  <q-badge&ndash;&gt;-->
-<!--&lt;!&ndash;                    :color="p.online ? 'light-green-5' : 'grey-4'">&ndash;&gt;-->
-<!--&lt;!&ndash;                    {{ p.online ? 'Online': 'Offline' }}&ndash;&gt;-->
-<!--&lt;!&ndash;                  </q-badge>&ndash;&gt;-->
-
-<!--&lt;!&ndash;                </q-item-section>&ndash;&gt;-->
-<!--              </q-item>-->
-
-
-<!--            </q-list>-->
-<!--          </div>-->
-<!--        </q-scroll-area>-->
-<!--      </q-drawer>-->
-<!--      <q-chat-message-->
-<!--        v-for="message in messages"-->
-<!--        :key="message.text"-->
-<!--        :name="message.from"-->
-<!--        :text="[message.text]"-->
-<!--        :sent=" message.from == 'me'? true: false "-->
-<!--      />-->
       <q-chat-message
         v-for="message in allMessages[selectedPeer]"
         :key="message.data + Math.random()"
@@ -109,58 +47,22 @@
 
 
 <script>
-    import IPFSChat from '../js/IPFSChat';
-    import {mapGetters} from 'vuex'
-
-    // import UploadFile from '../js/UploadFile';
-
+    import {mapGetters, mapState} from 'vuex'
     export default {
 
   data () {
       return{
           newMessage: '',
-          messages: [
-              {
-                  text: 'Hey du!',
-                  from: 'them'
-              },
-              {
-                  text: 'Hello, was geht bei dir',
-                  from: 'me'
-              },
-              {
-                  text: 'Danke gut und usw',
-                  from: 'them'
-              },
-              {
-                  text: 'Was sonst',
-                  from: 'them'
-              }
-          ],
-          //New Variables
 
-          // allMessages: {
-          //     'global': []
-          // },
-          //IPFSChatInstance: null,
-          drawerLeft: false,
-          users: [ {
-              id: 1,
-              name: 'Global',
-              online:true
-          }, {
-              id: 2,
-              name: 'Mia',
-              online: false
-          }, {
-              id: 3,
-              name: 'Paul',
-              online:false
-          }]
       }
 
   },
         computed:  {
+
+        ...mapState({
+           //selectedPeer: state => state.selectedPeer,
+        }),
+
         ...mapGetters({
             allMessages: 'DataStore/messageGetter',
             peers: 'DataStore/peerGetter',
@@ -172,71 +74,42 @@
         })
         },
     methods: {
-      uploadFile(file){
-          let name =  'file' + Math.random();
-          const reader = new FileReader();
 
-          reader.onload = async (e) => {
-              let ipfsLink = await this.IPFSChatInstance.uploadFile(`file.${Math.random()}`, e.target.result);
 
-              setTimeout(()=>{
+      //Not yet implemented...
+        uploadFile(file) {
+            let name = 'file' + Math.random();
+            const reader = new FileReader();
 
-                  this.IPFSChatInstance.sendNewMsg('global', `<a target='_blank' href='${ipfsLink}'> ${file.name} </a>`);
+            reader.onload = async (e) => {
+                let ipfsLink = await this.IPFSChatInstance.uploadFile(`file.${Math.random()}`, e.target.result);
 
-              },1000)
+                setTimeout(() => {
 
-          };
-          reader.readAsText(file);
+                    this.IPFSChatInstance.sendNewMsg('global', `<a target='_blank' href='${ipfsLink}'> ${file.name} </a>`);
 
-          // Prevent upload
-          return false;
+                }, 1000)
 
-          alert("hello!");
-      },
-      //Old Methods
-      sendMessage() {
-          if (this.newMessage != ''){
-          this.messages.push({
-              text: this.newMessage,
-              from: 'me'
-          });
-              if (this.selectedPeer == 'global')
-                this.IPFSChatInstance.sendNewMsg('global', this.newMessage);
+            };
+            reader.readAsText(file);
 
-              else
-                  this.IPFSChatInstance.sendNewMsg('private-chat', `${this.selectedPeer}:${this.newMessage}`)
-              this.newMessage = ''
-          }
-      },
+            // Prevent upload
+            return false;
 
-        //New Messages
+        },
 
-        // scrollDownTheMsgs(){
-        //     setTimeout(() => {
-        //         let msgContainer = document.getElementsByClassName('msg-container')[0];
-        //         msgContainer.scrollTop = msgContainer.scrollHeight;
-        //     }, 200)
-        // },
-        // globalMsgHandler(msg) {
-        //
-        //     // console.log('globalMsgHandler received', msg.data.toString(), 'from', msg.from)
-        //    // this.scrollDownTheMsgs();
-        //         console.log("MSG: "+ msg);
-        //         let newMessages = Object.assign({}, this.allMessages);
-        //         let currentDate = new Date();
-        //         let dateString = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}    ${currentDate.getHours()}:${currentDate.getMinutes()}`;
-        //
-        //         newMessages['global'].push({
-        //             from: msg.from,
-        //             data: msg.data.toString(),
-        //             date: dateString
-        //         });
-        //
-        //         this.allMessages = newMessages;
-        //         console.log(newMessages);
-        //         return { allMessages: newMessages }
-        //
-        // },
+        sendMessage() {
+            if (this.newMessage != '') {
+
+                console.log("selectedPeer: " + this.selectedPeer);
+                if (this.selectedPeer == 'global')
+                    this.IPFSChatInstance.sendNewMsg('global', this.newMessage);
+                else
+                    this.IPFSChatInstance.sendNewMsg('private-chat', `${this.selectedPeer}:${this.newMessage}`);
+                this.newMessage = ''
+            }
+        },
+
         mapNodeIDToName(nodeid) {
             let {peers} = this.peers;
             for (let i = peers.length - 1; i >= 0; i--) {
@@ -244,136 +117,9 @@
             }
             return nodeid;
         },
-
-        // nameServiceHandler(msg) {
-        //     let senderID = msg.from;
-        //     let senderName = msg.data.toString();
-        //
-        //
-        //         let peers = this.peers.slice();
-        //         peers.forEach(peer => {
-        //             if (peer.name == '' && peer.nodeid == senderID) {
-        //                 peer.name = senderName;
-        //             }
-        //         });
-        //         this.peers = peers;
-        //
-        // },
-
-        // privateChatHandler(msg){
-        //     let senderID = msg.from;
-        //     let data = msg.data.toString();
-        //     let receiverID = data.split(':')[0];
-        //     let theMsg = data.slice(data.split(':')[0].length+1)
-        //
-        //     const {myID} = this.myID;
-        //
-        //     // if someone send a message for me
-        //     if(receiverID && theMsg && receiverID == myID){
-        //
-        //
-        //             let existingAllMessags = Object.assign({}, this.allMessages);
-        //
-        //             if(!existingAllMessags[senderID])
-        //                 existingAllMessags[senderID]=[];
-        //
-        //             let currentDate = new Date();
-        //             let dateString = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}    ${currentDate.getHours()}:${currentDate.getMinutes()}`;
-        //
-        //             existingAllMessags[senderID].push({
-        //                 from: this.mapNodeIDToName(senderID),
-        //                 data: theMsg,
-        //                 date: dateString,
-        //                 mine: false
-        //             });
-        //
-        //             return {allMessages: existingAllMessags};
-        //
-        //     }
-        //
-        //     // if i'm the sender
-        //     else if(receiverID && theMsg && senderID == myID){
-        //
-        //
-        //
-        //             let existingAllMessags = Object.assign({}, this.allMessages);
-        //
-        //             if(!existingAllMessags[receiverID])
-        //                 existingAllMessags[receiverID]=[];
-        //
-        //             let currentDate = new Date();
-        //             let dateString = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}    ${currentDate.getHours()}:${currentDate.getMinutes()}`;
-        //
-        //             existingAllMessags[receiverID].push({
-        //                 from: this.mapNodeIDToName(receiverID),
-        //                 data: theMsg,
-        //                 date: dateString,
-        //                 mine: true
-        //             });
-        //
-        //             return {allMessages: existingAllMessags};
-        //
-        //
-        //     }
-        // }
-
-    },
-    created(){
-        // this.IPFSChatInstance = new IPFSChat();
-        //
-        // this.IPFSChatInstance.getID()
-        //     .then(myID => {
-        //         this.myID = myID ;
-        //     })
-        //     .then(() => {
-        //         this.IPFSChatInstance.newSubscribe('global', this.globalMsgHandler)
-        //         this.IPFSChatInstance.newSubscribe('name-servicex1xy', this.nameServiceHandler)
-        //         this.IPFSChatInstance.newSubscribe('private-chat', this.privateChatHandler)
-        //     });
-    },
-
-    mounted() {
-
-        // try {
-        //     setInterval(async () => {
-        //
-        //         let peersComing = await this.IPFSChatInstance.getPeers('global');
-        //         if (peersComing && peersComing.length) {
-        //
-        //                 //if i have no peers accept everything
-        //                 if (this.peers.length == 0)
-        //
-        //                         this.peers =  peersComing.map(peerID => ({ name: '', nodeid: peerID }))
-        //
-        //
-        //                 //else i have peers and i am not gonna empty them => adding the new ones only.
-        //                 let existingPeers = this.peers.slice();
-        //                 let existingPeersIDs = existingPeers.map(peer => peer.nodeid);
-        //
-        //                 peersComing.forEach(peerID => {
-        //                     if (existingPeersIDs.indexOf(peerID) == -1) {
-        //                         existingPeers.push({ name: '', nodeid: peerID })
-        //                     }
-        //                 });
-        //                // console.log("existingPeers: "+existingPeers);
-        //             //this.peers.push(existingPeers);
-        //
-        //
-        //                     this.peers = existingPeers;
-        //
-        //
-        //         }
-        //
-        //     }, 3000);
-        // } catch (error) {
-        //     console.warn(error);
-        // }
-        //
-        // setInterval(() => {
-        //     if (this.myName)
-        //         this.IPFSChatInstance.sendNewMsg('name-service', this.myName)
-        // }, 5000)
     }
+
+
 }
 </script>
 

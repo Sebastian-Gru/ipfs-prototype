@@ -1,4 +1,7 @@
 
+
+
+
 export const updateUserList = (state, newUserList) => {
   state.userList = newUserList
 }
@@ -28,13 +31,51 @@ export const myIDcommit= (state, myID) => {
 
 }
 
-export const messageCommiter = (state, message) => {
-  state.allMessages = message;
+export const messageCommiter = (state, {msg, ns} ) => {
+
+  let newMessages = Object.assign({}, state.allMessages);
+  let currentDate = new Date();
+  let dateString = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}    ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+
+
+  newMessages['global'].push({
+    from: msg.from,
+    data: msg.data.toString(),
+    date: dateString
+  });
+
+
+ // state.allMessages = newMessages;
+
+};
+
+
+export const peerName = (state, msg) => {
+
+  let senderID = msg.from;
+  let senderName = msg.data.toString();
+
+
+  let peers = state.peers.slice();
+  peers.forEach(peer => {
+    if (peer.name == '' && peer.nodeid == senderID) {
+      peer.name = senderName;
+    }
+  });
+  state.peers = peers;
 }
 
+export const myNameChange = (state, myName) => {
 
-export const peerName = (state, peers) => {
-  state.peers = peers;
+  console.log("myName: "+ myName);
+
+  state.myName = myName;
+
+}
+
+export const changeSelectedPeer = (state, selected) => {
+  console.log(selected);
+  state.selectedPeer = selected;
 }
 
 
