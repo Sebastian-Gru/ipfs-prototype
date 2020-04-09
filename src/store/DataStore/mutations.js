@@ -1,3 +1,4 @@
+import Notify from "quasar/src/plugins/Notify";
 
 
 
@@ -76,6 +77,86 @@ export const myNameChange = (state, myName) => {
 export const changeSelectedPeer = (state, selected) => {
   console.log(selected);
   state.selectedPeer = selected;
+}
+
+export const privateMessageCommiter = (state, msg) => {
+
+  console.log("Private Message incoming");
+  let senderID = msg.from;
+  let data = msg.data.toString();
+  let receiverID = data.split(':')[0];
+  let theMsg = data.slice(data.split(':')[0].length+1)
+  console.log(
+    "Data:" + data +
+    " " +
+    "| receiverID: "+ receiverID +
+    " " +
+    "| theMsg: " + theMsg
+  )
+
+  const myID = state.myID;
+  console.log("my ID: " +state.myID + " senderID: " + senderID
+  )
+
+
+  // if someone send a message for me
+  if(receiverID == myID){
+
+
+    let existingAllMessags = Object.assign({}, state.allMessages);
+
+    if(!existingAllMessags[senderID])
+      existingAllMessags[senderID]=[];
+
+    let currentDate = new Date();
+    let dateString = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}    ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+
+    existingAllMessags[senderID].push({
+      from: mapNodeIDToName(senderID, state.peers),
+      data: theMsg,
+      date: dateString,
+      mine: false
+    });
+
+    Notify.create({
+      message: `New Message from ${existingAllMessags[senderID][existingAllMessags[senderID].length-1].from}: ${existingAllMessags[senderID][existingAllMessags[senderID].length-1].data}`,
+      position: 'top-right'
+    })
+
+    state.allMessages = existingAllMessags;
+
+  }
+
+  // if i'm the sender
+  else if(senderID == myID){
+    let existingAllMessags = Object.assign({}, state.allMessages);
+
+    if(!existingAllMessags[receiverID])
+      existingAllMessags[receiverID]=[];
+
+    let currentDate = new Date();
+    let dateString = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}    ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+
+    existingAllMessags[receiverID].push({
+      from: state.myName? state.myName : state.myID,
+      data: theMsg,
+      date: dateString,
+      mine: true
+    });
+
+    console.log(state.allMessages[state.selectedPeer]);
+    state.allMessages = existingAllMessags;
+
+  }
+
+};
+
+const mapNodeIDToName = (nodeid, peers) =>  {
+
+  for (let i = peers.length - 1; i >= 0; i--) {
+    if (peers[i]['nodeid'] == nodeid && peers[i]['name'].length > 0) return peers[i]['name']
+  }
+  return nodeid;
 }
 
 

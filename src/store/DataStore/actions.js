@@ -46,8 +46,6 @@ export function instantiateIPFS({commit, state}){
       message: `New Message in Global Chat from ${msg.from}:\n ${msg.data.toString()}!`,
       position: "top-right"
     })
-
-
   };
 
 
@@ -66,71 +64,13 @@ export function instantiateIPFS({commit, state}){
   //private Message Handler
 
   const privateChatHandler = (msg) => {
-    console.log("Private Message incoming");
-    let senderID = msg.from;
-    let data = msg.data.toString();
-    let receiverID = data.split(':')[0];
-    let theMsg = data.slice(data.split(':')[0].length+1)
 
-    const {myID} = state.myID;
+    commit('privateMessageCommiter', msg);
 
-    // if someone send a message for me
-    if(receiverID && theMsg && receiverID == myID){
-
-
-      let existingAllMessags = Object.assign({}, state.allMessages);
-
-      if(!existingAllMessags[senderID])
-        existingAllMessags[senderID]=[];
-
-      let currentDate = new Date();
-      let dateString = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}    ${currentDate.getHours()}:${currentDate.getMinutes()}`;
-
-      existingAllMessags[senderID].push({
-        from: this.mapNodeIDToName(senderID),
-        data: theMsg,
-        date: dateString,
-        mine: false
-      });
-
-      console.log(existingAllMessags);
-      commit('messageCommiter', existingAllMessags);
-
-    }
-
-    // if i'm the sender
-    else if(receiverID && theMsg && senderID == myID){
-
-      let existingAllMessags = Object.assign({}, state.allMessages);
-
-      if(!existingAllMessags[receiverID])
-        existingAllMessags[receiverID]=[];
-
-      let currentDate = new Date();
-      let dateString = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}    ${currentDate.getHours()}:${currentDate.getMinutes()}`;
-
-      existingAllMessags[receiverID].push({
-        from: this.mapNodeIDToName(receiverID),
-        data: theMsg,
-        date: dateString,
-        mine: true
-      });
-
-      console.log(existingAllMessags);
-
-      commit('messageCommiter', existingAllMessags);
-
-    }
   }
 
 
-  const mapNodeIDToName = (nodeid) =>  {
-    let {peers} = state.peers;
-    for (let i = peers.length - 1; i >= 0; i--) {
-      if (peers[i]['nodeid'] == nodeid && peers[i]['name'].length > 0) return peers[i]['name']
-    }
-    return nodeid;
-  }
+
 
 
 
