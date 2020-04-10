@@ -41,7 +41,7 @@ export function instantiateIPFS({commit, state}){
   const globalMsgHandler = (msg) =>  {
 
     commit('messageCommiter', {msg, ns: 'global'});
-
+    if(state.myID != msg.from)
     Notify.create({
       message: `New Message in Global Chat from ${msg.from}:\n ${msg.data.toString()}!`,
       position: "top-right"

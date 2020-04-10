@@ -1,8 +1,10 @@
 <template>
   <q-page class="flex q-pa-md">
+
     <q-list
       class="full-width"
       separator>
+
       <q-item
         v-for="user in peers "
         :key="user.nodeid"
@@ -30,8 +32,6 @@
 
         </q-item-section>
       </q-item>
-
-
     </q-list>
 
     <q-card flat bordered class="my-card fixed-bottom-right q-ma-md q-pa-md">

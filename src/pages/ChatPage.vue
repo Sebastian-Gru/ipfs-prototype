@@ -2,6 +2,14 @@
 <template>
 
   <q-page class="flex column">
+    <q-card flat bordered class="my-card fixed-top-right q-ma-md q-pa-md">
+      <q-card-section>
+        <div class="text-h6">Upload a File</div>
+      </q-card-section>
+      <q-card-section>
+        <input type="file" @change="uploadFile">
+      </q-card-section>
+    </q-card>
 
     <div class="q-pa-md column col justify-end">
 
@@ -17,9 +25,11 @@
 
     <q-footer elevated>
       <q-toolbar>
+
         <q-form
           @submit="sendMessage"
           class="full-width">
+
           <q-input
             v-model="newMessage"
             bg-color="white"
@@ -37,22 +47,29 @@
                 type="submit"
                 color="white"
                 icon="send" />
+
             </template>
           </q-input>
         </q-form>
+
+
       </q-toolbar>
+
     </q-footer>
   </q-page>
 </template>
 
 
 <script>
-    import {mapGetters, mapState} from 'vuex'
+    import {mapGetters, mapState, mapActions} from 'vuex'
     export default {
+
+
 
   data () {
       return{
           newMessage: '',
+          file: null
 
       }
 
@@ -76,27 +93,18 @@
     methods: {
 
 
-      //Not yet implemented...
-        uploadFile(file) {
-            let name = 'file' + Math.random();
-            const reader = new FileReader();
-
-            reader.onload = async (e) => {
-                let ipfsLink = await this.IPFSChatInstance.uploadFile(`file.${Math.random()}`, e.target.result);
-
-                setTimeout(() => {
-
-                    this.IPFSChatInstance.sendNewMsg('global', `<a target='_blank' href='${ipfsLink}'> ${file.name} </a>`);
-
-                }, 1000)
-
-            };
-            reader.readAsText(file);
-
-            // Prevent upload
-            return false;
-
+        uploadFile(){
+          console.log("Not implemented yet!");
         },
+
+
+      ...mapActions({
+          someAction: 'DataStore/someAction',
+          anotherFunction: 'DataStore/anotherFunction',
+          instantiateIPFS: 'DataStore/instantiateIPFS',
+          intervallIPFS: 'DataStore/intervallIPFS'
+      }),
+
 
         sendMessage() {
             if (this.newMessage != '') {
@@ -117,11 +125,22 @@
             }
             return nodeid;
         },
+    },
+    created () {
+        if(!this.IPFSChatInstance){
+            this.instantiateIPFS();
+            this.someAction();
+            this.anotherFunction();
+        }
+
+    },
+    mounted() {
+        if(!this.IPFSChatInstance)
+        this.intervallIPFS();
     }
 
 
 }
 </script>
-
 
 
