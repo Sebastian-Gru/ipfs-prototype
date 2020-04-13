@@ -4,7 +4,7 @@
       <q-toolbar>
 
         <q-btn
-          v-if="$route.fullPath.includes('/chat')"
+          v-if="$route.meta.back"
           v-go-back.single
           flat
           dense
@@ -49,9 +49,11 @@ export default {
          myID: 'DataStore/myIDGetter'
      }),
      title (){
-          let currentPath = this.$route.fullPath;
+         let currentPath = this.$route.fullPath;
          if (currentPath === '/') return 'IPFS - Chat';
          else if (currentPath === '/chat') return this.selectedPeer === 'global'? "Global Chat": `Chat with ${this.mapNodeIDToName(this.selectedPeer)}`;
+         else if(currentPath === '/filesharing' ) return 'IPFS - FileSharing';
+         else if(currentPath === '/profile' ) return 'IPFS - FileSharing';
          return 'Fehler';
      }
  },

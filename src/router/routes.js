@@ -5,7 +5,9 @@ const routes = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: '', component: () => import('pages/PageUsers.vue'), meta: {tabs: true} },
-      { path: '/chat', component: () => import('pages/ChatPage.vue') }
+      { path: '/chat', component: () => import('pages/ChatPage.vue'),  meta: {back: true} },
+      {path: '/filesharing', component: ()=> import ('pages/FileSharing.vue'), meta: {tabs: true} },
+      {path: '/profile', component: ()=> import ('pages/Profile.vue'), meta: {tabs: true} }
     ]
   }
 ];

@@ -58,8 +58,8 @@
 
             </template>
           </q-input>
-        </q-form>
 
+        </q-form>
 
       </q-toolbar>
 
