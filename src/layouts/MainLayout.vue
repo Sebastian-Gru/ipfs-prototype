@@ -18,8 +18,11 @@
       </q-toolbar>
 
       <q-tabs
+        inline-label
+        class="text-yellow"
+        align="justify"
         dense
-        align="center"
+        animated
         v-if="$route.meta.tabs">
         <q-route-tab to="/" label="Chat" icon="chat"/>
         <q-route-tab to="/profile" label="Profil" icon="person"/>

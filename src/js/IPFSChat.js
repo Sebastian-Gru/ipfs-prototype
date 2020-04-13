@@ -31,6 +31,8 @@ console.log("This is the node id:: " + node.id);
 
 		  console.log('file link',`https://ipfs.io/ipfs/${filesAdded[0].hash}`);
 
+		 // await getFile(filesAdded[0].hash);
+
 		return `https://ipfs.io/ipfs/${filesAdded[0].hash}`;
     }
 
@@ -92,7 +94,7 @@ console.log("This is the node id:: " + node.id);
 
       for await (const file of node.get(hash)) {
         if (file.content) {
-          console.log("file was added: "+ file.name)
+          console.log("file was downloaded: "+ file.name)
           console.log(file);
         }
       }

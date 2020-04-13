@@ -1,7 +1,9 @@
 
 <template>
 
-  <q-page class="flex column">
+  <q-page
+    ref="pageChat"
+    class="page-chat flex column">
     <q-card flat bordered class="my-card fixed-top-right q-ma-md q-pa-md">
       <q-card-section>
         <div class="text-h6">Upload a File</div>
@@ -19,14 +21,18 @@
       </q-card-section>
     </q-card>
 
-    <div class="q-pa-md column col justify-end" id="Messages">
+    <div
+      class="q-pa-md column col justify-end"
+      id="Messages">
 
       <q-chat-message
         v-for="message in allMessages[selectedPeer]"
         :key="message.data + Math.random()"
         :name="message.from"
+        :stamp="message.date? message.date.slice(10): 'just now'"
         :text="[message.data]"
         :sent="message.from == myID|| message.from == myName"
+        :
       />
 
     </div>
@@ -40,6 +46,8 @@
 
           <q-input
             v-model="newMessage"
+            @blur="scrollToBottom"
+            ref="newMessage"
             bg-color="white"
             outlined
             rounded
@@ -77,9 +85,8 @@
   data () {
       return{
           newMessage: '',
-          file: null,
-          files: null,
-          model: null
+          model: null,
+          showMessages: false
 
       }
 
@@ -106,7 +113,6 @@
 
         ...mapActions({
           someAction: 'DataStore/someAction',
-          anotherFunction: 'DataStore/anotherFunction',
           instantiateIPFS: 'DataStore/instantiateIPFS',
           intervallIPFS: 'DataStore/intervallIPFS',
           uploadFile: 'DataStore/uploadFile'
@@ -115,7 +121,7 @@
         uploadFiletoIPFS(){
 
             this.uploadFile(this.model);
-            this.model = "";
+            //this.model = "";
         },
 
 
@@ -127,17 +133,32 @@
                     this.IPFSChatInstance.sendNewMsg('global', this.newMessage);
                 else
                     this.IPFSChatInstance.sendNewMsg('private-chat', `${this.selectedPeer}:${this.newMessage}`);
-                this.newMessage = ''
+                this.newMessage = '';
+                this.$refs.newMessage.focus()
             }
         },
+        scrollToBottom() {
+            let pageChat = this.$refs.pageChat.$el
+            setTimeout(() => {
+                window.scrollTo(0, pageChat.scrollHeight)
+            }, 20);
+        }
 
 
     },
+
+        watch: {
+            allMessages: function(val) {
+                if (Object.keys(val).length) {
+                    this.scrollToBottom()
+                }
+            }
+        },
+
     created () {
         if(!this.IPFSChatInstance){
             this.instantiateIPFS();
             this.someAction();
-            this.anotherFunction();
         }
 
     },

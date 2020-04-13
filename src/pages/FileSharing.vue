@@ -1,7 +1,5 @@
 <template>
-    <div class="FileSharing">
-        <pre v-text="$attrs"/>
-    </div>
+  <h1>File-Sharing</h1>
 </template>
 
 <script>

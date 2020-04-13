@@ -124,7 +124,6 @@ export function uploadFile ({commit, state}, model) {
     else
       state.IPFSChatInstance.sendNewMsg('private-chat', `${state.selectedPeer}:<a target="_blank" href="${value}"> ${model.name} </a>`);
 
-
   }).catch(err => console.log(err));
 
 }

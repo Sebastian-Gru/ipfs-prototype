@@ -88,7 +88,6 @@
         methods: {
             ...mapActions({
                 someAction: 'DataStore/someAction',
-                anotherFunction: 'DataStore/anotherFunction',
                 instantiateIPFS: 'DataStore/instantiateIPFS',
                 intervallIPFS: 'DataStore/intervallIPFS'
             }),
@@ -111,7 +110,6 @@
           if(!this.IPFSChatInstance){
               this.instantiateIPFS();
               this.someAction();
-              this.anotherFunction();
           }
 
         },
