@@ -19,14 +19,14 @@
       </q-card-section>
     </q-card>
 
-    <div class="q-pa-md column col justify-end">
+    <div class="q-pa-md column col justify-end" id="Messages">
 
       <q-chat-message
         v-for="message in allMessages[selectedPeer]"
         :key="message.data + Math.random()"
         :name="message.from"
         :text="[message.data]"
-        :sent=" message.from == myID? true: false "
+        :sent="message.from == myID|| message.from == myName"
       />
 
     </div>
@@ -109,19 +109,13 @@
           anotherFunction: 'DataStore/anotherFunction',
           instantiateIPFS: 'DataStore/instantiateIPFS',
           intervallIPFS: 'DataStore/intervallIPFS',
-            uploadFile: 'DataStore/uploadFile'
+          uploadFile: 'DataStore/uploadFile'
       }),
 
         uploadFiletoIPFS(){
-           // event.preventDefault();
-            //console.log("Maybe imokemented "+ this.model.name + " :event: " + event.target.files);
-            //console.log(event.target.files[0])
 
-
-                //reader.readAsText(this.model);
-
-            // Prevent upload
             this.uploadFile(this.model);
+            this.model = "";
         },
 
 
@@ -137,13 +131,7 @@
             }
         },
 
-        mapNodeIDToName(nodeid) {
-            let {peers} = this.peers;
-            for (let i = peers.length - 1; i >= 0; i--) {
-                if (peers[i]['nodeid'] == nodeid && peers[i]['name'].length > 0) return peers[i]['name']
-            }
-            return nodeid;
-        },
+
     },
     created () {
         if(!this.IPFSChatInstance){
@@ -161,5 +149,10 @@
 
 }
 </script>
+<style scoped>
+  #Messages {
+    overflow-y: scroll;
+  }
+</style>
 
 

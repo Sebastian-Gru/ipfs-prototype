@@ -4,11 +4,11 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/PageUsers.vue') },
+      { path: '', component: () => import('pages/PageUsers.vue'), meta: {tabs: true} },
       { path: '/chat', component: () => import('pages/ChatPage.vue') }
     ]
   }
-]
+];
 
 // Always leave this as last one
 if (process.env.MODE !== 'ssr') {

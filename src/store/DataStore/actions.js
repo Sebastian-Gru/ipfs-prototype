@@ -7,24 +7,15 @@ export function someAction ({ commit },context) {
 
 }
 
-export function anotherFunction({ commit },context) {
 
-  console.log("Moin");
-   let x = "Moinsen from anotherFunction"
-
-  commit('test', x);
-
-}
 
 //Hier soll IPFS Instanziiert werden.
 export function instantiateIPFS({commit, state}){
 
   let IPFSChatInstance = new IPFSChat();
-  let myID;
 
   IPFSChatInstance.getID()
     .then(myID => {
-        myID = myID ;
         commit('myIDcommit', myID)
     })
     .then(() => {
@@ -43,7 +34,7 @@ export function instantiateIPFS({commit, state}){
   const globalMsgHandler = (msg) =>  {
 
     commit('messageCommiter', {msg, ns: 'global'});
-    if(state.myID != msg.from)
+    if(state.myID !== msg.from)
     Notify.create({
       message: `New Message in Global Chat from ${msg.from}:\n ${msg.data.toString()}!`,
       position: "top-right"
@@ -66,16 +57,8 @@ export function instantiateIPFS({commit, state}){
   //private Message Handler
 
   const privateChatHandler = (msg) => {
-
     commit('privateMessageCommiter', msg);
-
   }
-
-
-
-
-
-
 }
 
 
@@ -88,7 +71,7 @@ export function intervallIPFS({commit, state}) {
       if (peersComing && peersComing.length) {
 
         //if i have no peers accept everything
-        if (state.peers.length == 0)
+        if (state.peers.length === 0)
 
           commit('peerChange',  peersComing.map(peerID => ({ name: '', nodeid: peerID })))
 
@@ -98,13 +81,13 @@ export function intervallIPFS({commit, state}) {
         let existingPeersIDs = existingPeers.map(peer => peer.nodeid);
 
         peersComing.forEach(peerID => {
-          if (existingPeersIDs.indexOf(peerID) == -1) {
+          if (existingPeersIDs.indexOf(peerID) === -1) {
             existingPeers.push({ name: '', nodeid: peerID })
           }
         });
         // console.log("existingPeers: "+existingPeers);
         //this.peers.push(existingPeers);
-        if(state.peers != existingPeers)
+        if(state.peers !== existingPeers)
         commit('peerChange',  existingPeers)
 
       }
@@ -122,9 +105,7 @@ export function intervallIPFS({commit, state}) {
 }
 
 export function uploadFile ({commit, state}, model) {
-  console.log(this.model)
 
-  let test = "blasdlasldalsdlasld";
   console.log(model);
 
 
@@ -132,16 +113,16 @@ export function uploadFile ({commit, state}, model) {
 
     return await state.IPFSChatInstance.uploadFile(`file.${Math.random()}`, model);
 
-  } ;
+  }
 
 
   uploadFunc().then((value) =>{
 
 
-    if(state.selectedPeer == 'global')
+    if(state.selectedPeer === 'global')
       state.IPFSChatInstance.sendNewMsg('global', `<a target="_blank" href="${value}"> ${model.name} </a>`);
     else
-      state.IPFSChatInstance.sendNewMsg('private-chat', `${this.selectedPeer}:<a target="_blank" href="${value}"> ${model.name} </a>`);
+      state.IPFSChatInstance.sendNewMsg('private-chat', `${state.selectedPeer}:<a target="_blank" href="${value}"> ${model.name} </a>`);
 
 
   }).catch(err => console.log(err));

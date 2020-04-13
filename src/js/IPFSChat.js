@@ -21,8 +21,7 @@ function IPFSChat() {
 console.log("This is the node id:: " + node.id);
 
     async function uploadFile(fileName, fileContent){
-      console.log(fileName);
-      console.log(fileContent);
+
     	if(!this.ready) return;
 
     	  const filesAdded = await node.add({
@@ -30,7 +29,7 @@ console.log("This is the node id:: " + node.id);
             content: fileContent
         });
 
-		  console.log('file link',`https://ipfs.io/ipfs/${filesAdded[0].hash}`)
+		  console.log('file link',`https://ipfs.io/ipfs/${filesAdded[0].hash}`);
 
 		return `https://ipfs.io/ipfs/${filesAdded[0].hash}`;
     }
@@ -63,8 +62,6 @@ console.log("This is the node id:: " + node.id);
 
         return new Promise((resolve, reject) => {
             if (!this.ready) reject('');
-
-            // console.log('looking for peers');
 
             node.pubsub.peers(topic, (error, peersIDs) => {
                 if (error) {
