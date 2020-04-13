@@ -33,7 +33,9 @@ export function instantiateIPFS({commit, state}){
       IPFSChatInstance.newSubscribe('name-service', nameServiceHandler);
 
       IPFSChatInstance.newSubscribe('private-chat', privateChatHandler);
-    });
+    }).catch(e=>{
+      console.log(e);
+  });
 
   commit('ipfsInstance', IPFSChatInstance);
 
@@ -116,6 +118,33 @@ export function intervallIPFS({commit, state}) {
     if (state.myName)
       state.IPFSChatInstance.sendNewMsg('name-service', state.myName)
   }, 50000)
+
+}
+
+export function uploadFile ({commit, state}, model) {
+  console.log(this.model)
+
+  let test = "blasdlasldalsdlasld";
+  console.log(model);
+
+
+  async function  uploadFunc() {
+
+    return await state.IPFSChatInstance.uploadFile(`file.${Math.random()}`, model);
+
+  } ;
+
+
+  uploadFunc().then((value) =>{
+
+
+    if(state.selectedPeer == 'global')
+      state.IPFSChatInstance.sendNewMsg('global', `<a target="_blank" href="${value}"> ${model.name} </a>`);
+    else
+      state.IPFSChatInstance.sendNewMsg('private-chat', `${this.selectedPeer}:<a target="_blank" href="${value}"> ${model.name} </a>`);
+
+
+  }).catch(err => console.log(err));
 
 }
 

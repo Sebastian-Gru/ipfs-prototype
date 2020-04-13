@@ -15,7 +15,7 @@
     "@quasar/extras": "^1.0.0",
     "antd": "^4.1.0",
     "buffer": "^5.2.1",
-    "ipfs": "^0.35.0",
+    "ipfs": "^0.39.0",
     "quasar": "^1.0.0",
     "vue": "latest",
     "vuex": "latest",

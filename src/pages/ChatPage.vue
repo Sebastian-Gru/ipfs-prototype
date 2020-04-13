@@ -7,7 +7,15 @@
         <div class="text-h6">Upload a File</div>
       </q-card-section>
       <q-card-section>
-        <input type="file" @change="uploadFile">
+        <q-form @submit="uploadFiletoIPFS" class="q-gutter-md">
+
+        <q-file v-model="model" label="Standard" />
+
+          <div>
+            <q-btn label="Submit" type="submit" color="primary"/>
+          </div>
+
+        </q-form>
       </q-card-section>
     </q-card>
 
@@ -69,7 +77,9 @@
   data () {
       return{
           newMessage: '',
-          file: null
+          file: null,
+          files: null,
+          model: null
 
       }
 
@@ -93,17 +103,26 @@
     methods: {
 
 
-        uploadFile(){
-          console.log("Not implemented yet!");
-        },
 
-
-      ...mapActions({
+        ...mapActions({
           someAction: 'DataStore/someAction',
           anotherFunction: 'DataStore/anotherFunction',
           instantiateIPFS: 'DataStore/instantiateIPFS',
-          intervallIPFS: 'DataStore/intervallIPFS'
+          intervallIPFS: 'DataStore/intervallIPFS',
+            uploadFile: 'DataStore/uploadFile'
       }),
+
+        uploadFiletoIPFS(){
+           // event.preventDefault();
+            //console.log("Maybe imokemented "+ this.model.name + " :event: " + event.target.files);
+            //console.log(event.target.files[0])
+
+
+                //reader.readAsText(this.model);
+
+            // Prevent upload
+            this.uploadFile(this.model);
+        },
 
 
         sendMessage() {

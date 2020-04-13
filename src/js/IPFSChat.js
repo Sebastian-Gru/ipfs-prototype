@@ -7,7 +7,6 @@ function IPFSChat() {
     this.ready = false;
 
     node = new IPFS({
-        EXPERIMENTAL: { pubsub: true },
         repo: (() => `repo-${Math.random()}`)(),
         config: {
             Addresses: {
@@ -18,24 +17,17 @@ function IPFSChat() {
         }
     });
 
-    // node.on('ready', async () => {
-    //     const version = await node.version()
 
-    //     console.log('Version:', version.version)
+console.log("This is the node id:: " + node.id);
 
-    //     const filesAdded = await node.add({
-    //         path: 'hello.txt',
-    //         content: Buffer.from('Hello World 101 by lalosh')
-    //     })
-
-    //     console.log('Added file:', filesAdded[0].path, filesAdded[0].hash)
-    // })
     async function uploadFile(fileName, fileContent){
+      console.log(fileName);
+      console.log(fileContent);
     	if(!this.ready) return;
 
     	  const filesAdded = await node.add({
             path: fileName,
-            content: Buffer.from(fileContent)
+            content: fileContent
         });
 
 		  console.log('file link',`https://ipfs.io/ipfs/${filesAdded[0].hash}`)
@@ -99,12 +91,23 @@ function IPFSChat() {
         })
     }
 
+    async function getFile (hash) {
+
+      for await (const file of node.get(hash)) {
+        if (file.content) {
+          console.log("file was added: "+ file.name)
+          console.log(file);
+        }
+      }
+    }
+
     return {
         newSubscribe,
         getID,
         getPeers,
         sendNewMsg,
-        uploadFile
+        uploadFile,
+        getFile
     }
 }
 
