@@ -1,4 +1,4 @@
-import IPFSChat from "src/js/IPFSChat";
+import IPFSInstance from "src/js/IPFSInstance";
 import Notify from "quasar/src/plugins/Notify";
 
 export function someAction ({ commit },context) {
@@ -12,7 +12,7 @@ export function someAction ({ commit },context) {
 //Hier soll IPFS Instanziiert werden.
 export function instantiateIPFS({commit, state}){
 
-  let IPFSChatInstance = new IPFSChat();
+  let IPFSChatInstance = new IPFSInstance();
 
   IPFSChatInstance.getID()
     .then(myID => {

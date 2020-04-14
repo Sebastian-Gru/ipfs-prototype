@@ -3,7 +3,7 @@ import BufferPackage from 'buffer';
 const Buffer = BufferPackage.Buffer;
 let node = null;
 
-function IPFSChat() {
+function IPFSInstance() {
     this.ready = false;
 
     node = new IPFS({
@@ -111,4 +111,4 @@ console.log("This is the node id:: " + node.id);
     }
 }
 
-export default IPFSChat;
+export default IPFSInstance;
