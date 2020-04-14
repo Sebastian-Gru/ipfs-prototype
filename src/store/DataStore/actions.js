@@ -24,6 +24,9 @@ export function instantiateIPFS({commit, state}){
       IPFSChatInstance.newSubscribe('name-service', nameServiceHandler);
 
       IPFSChatInstance.newSubscribe('private-chat', privateChatHandler);
+
+      IPFSChatInstance.newSubscribe('file-sharing-by-sebastian', myOwnMessageHandler);
+
     }).catch(e=>{
       console.log(e);
   });
@@ -58,6 +61,12 @@ export function instantiateIPFS({commit, state}){
 
   const privateChatHandler = (msg) => {
     commit('privateMessageCommiter', msg);
+  }
+
+  const myOwnMessageHandler = (msg) => {
+    //hier kommt hoffentlich der Hash an.
+    console.log("myOwnMessageHandler::: " + msg.data.toString());
+    state.IPFSChatInstance.getFile(msg.data.toString());
   }
 }
 
@@ -108,7 +117,16 @@ export function uploadFile ({commit, state}, model) {
 
   async function  uploadFunc() {
 
-    return await state.IPFSChatInstance.uploadFile(`file.${Math.random()}`, model);
+
+    let hashReturn = await state.IPFSChatInstance.uploadFile(`file.${Math.random()}`, model);
+
+    console.log("FileHash: " +hashReturn[1]);
+
+    state.IPFSChatInstance.sendNewMsg('file-sharing-by-sebastian', hashReturn[1]);
+
+    state.IPFSChatInstance.getFile(hashReturn[1]);
+
+    return hashReturn[0];
 
   }
 

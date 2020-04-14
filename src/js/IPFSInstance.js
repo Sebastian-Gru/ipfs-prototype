@@ -1,6 +1,8 @@
 import IPFS from 'ipfs';
 import BufferPackage from 'buffer';
+import { saveAs } from 'file-saver';
 const Buffer = BufferPackage.Buffer;
+
 let node = null;
 
 function IPFSInstance() {
@@ -31,9 +33,8 @@ console.log("This is the node id:: " + node.id);
 
 		  console.log('file link',`https://ipfs.io/ipfs/${filesAdded[0].hash}`);
 
-		  //await getFile(filesAdded[0].hash);
 
-		return `https://ipfs.io/ipfs/${filesAdded[0].hash}`;
+      return [`https://ipfs.io/ipfs/${filesAdded[0].hash}`, filesAdded[0].hash];
 
     }
 
@@ -79,7 +80,7 @@ console.log("This is the node id:: " + node.id);
 
 
     function sendNewMsg(topic, newMsg) {
-    	console.log('sendNewMsg received: ', newMsg)
+    	//console.log('sendNewMsg received: ', newMsg)
         const msg = Buffer.from(newMsg);
 
         node.pubsub.publish(topic, msg, (err) => {
@@ -87,19 +88,31 @@ console.log("This is the node id:: " + node.id);
                 return console.error(`failed to publish to ${topic}`, err)
             }
             // msg was broadcasted
-            console.log(`published to ${topic}`)
+           // console.log(`published to ${topic}`)
         })
     }
 
     async function getFile (hash) {
 
-      for await (const file of node.get(hash)) {
-        if (file.content) {
-          console.log("file was downloaded: "+ file.name)
-          console.log(file);
-        }
+        const file = await node.get(hash);
+
+            const content = Buffer(await file[0].content)
+
+            appendFile( await content)
+
       }
-    }
+
+  function appendFile (data) {
+    const file = new window.Blob([data], { type: 'application/octet-binary' })
+    const url = window.URL.createObjectURL(file)
+
+    console.log("AppendFile::::::");
+    console.log(url);
+    saveAs(url, "image.png");
+
+  }
+
+
 
     return {
         newSubscribe,

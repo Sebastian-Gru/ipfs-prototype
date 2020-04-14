@@ -124,6 +124,7 @@
 
             this.uploadFile(this.model);
             //this.model = "";
+
         },
 
 

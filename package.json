@@ -15,11 +15,14 @@
     "@quasar/extras": "^1.0.0",
     "antd": "^4.1.0",
     "buffer": "^5.2.1",
+    "file-saver": "^2.0.2",
     "ipfs": "^0.39.0",
+    "js-file-downloader": "^1.1.6",
+    "node-downloader-helper": "^1.0.12",
     "quasar": "^1.0.0",
     "vue": "latest",
-    "vuex": "latest",
-    "vue-router": "latest"
+    "vue-router": "latest",
+    "vuex": "latest"
   },
   "devDependencies": {
     "@quasar/app": "^1.0.0",
