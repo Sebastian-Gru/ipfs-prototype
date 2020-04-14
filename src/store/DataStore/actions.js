@@ -106,9 +106,6 @@ export function intervallIPFS({commit, state}) {
 
 export function uploadFile ({commit, state}, model) {
 
-  console.log(model);
-
-
   async function  uploadFunc() {
 
     return await state.IPFSChatInstance.uploadFile(`file.${Math.random()}`, model);

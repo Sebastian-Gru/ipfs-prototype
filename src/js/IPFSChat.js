@@ -31,9 +31,10 @@ console.log("This is the node id:: " + node.id);
 
 		  console.log('file link',`https://ipfs.io/ipfs/${filesAdded[0].hash}`);
 
-		 // await getFile(filesAdded[0].hash);
+		  //await getFile(filesAdded[0].hash);
 
 		return `https://ipfs.io/ipfs/${filesAdded[0].hash}`;
+
     }
 
     function getID(callback) {

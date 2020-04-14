@@ -13,6 +13,7 @@
         to="/chat"
         clickable v-ripple
         >
+
         <q-item-section avatar>
           <q-avatar color="primary" text-color="white">
             {{ user.name? user.name[0] :user.nodeid[0] }}
@@ -32,6 +33,10 @@
 
         </q-item-section>
       </q-item>
+      <q-skeleton
+        v-if="peers.length === 1"
+        class="q-mt-md"
+        animation="pulse-x"/>
     </q-list>
 
     <q-card flat bordered class="my-card fixed-bottom-right q-ma-md q-pa-md">

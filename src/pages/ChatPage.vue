@@ -4,22 +4,25 @@
   <q-page
     ref="pageChat"
     class="page-chat flex column">
-    <q-card flat bordered class="my-card fixed-top-right q-ma-md q-pa-md">
-      <q-card-section>
-        <div class="text-h6">Upload a File</div>
-      </q-card-section>
+    <div
+      class="q-pa-md fixed-top-right z-top q-mt-xl"
+     >
+    <q-btn-dropdown
+      color="primary" label="Share File with the Chat">
+    <q-card flat bordered >
       <q-card-section>
         <q-form @submit="uploadFiletoIPFS" class="q-gutter-md">
-
-        <q-file v-model="model" label="Standard" />
-
+        <q-file v-model="model" label="Click to choose File" />
           <div>
             <q-btn label="Submit" type="submit" color="primary"/>
           </div>
-
         </q-form>
       </q-card-section>
     </q-card>
+    </q-btn-dropdown>
+    </div>
+
+
 
     <div
       class="q-pa-md column col justify-end"
@@ -29,13 +32,12 @@
         v-for="message in allMessages[selectedPeer]"
         :key="message.data + Math.random()"
         :name="message.from"
-        :stamp="message.date? message.date.slice(10): 'just now'"
+        :stamp="message.date? message.date.slice(10): 'just now' "
         :text="[message.data]"
         :sent="message.from == myID|| message.from == myName"
-        :
       />
-
     </div>
+
 
     <q-footer elevated>
       <q-toolbar>
@@ -135,6 +137,7 @@
                     this.IPFSChatInstance.sendNewMsg('private-chat', `${this.selectedPeer}:${this.newMessage}`);
                 this.newMessage = '';
                 this.$refs.newMessage.focus()
+                this.scrollToBottom()
             }
         },
         scrollToBottom() {
@@ -160,20 +163,13 @@
             this.instantiateIPFS();
             this.someAction();
         }
-
     },
     mounted() {
         if(!this.IPFSChatInstance)
         this.intervallIPFS();
     }
-
-
 }
 </script>
-<style scoped>
-  #Messages {
-    overflow-y: scroll;
-  }
-</style>
+
 
 
