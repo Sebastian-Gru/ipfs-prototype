@@ -17,7 +17,8 @@ export default function () {
       'global': [
         {
           from: 'xyz',
-          data: 'Hello!!!'
+          data: 'Hello!!!',
+          urls: 'https://rad-spannerei.de/wp-content/2018/03/swapfiets.jpg'
         }
       ]
     },

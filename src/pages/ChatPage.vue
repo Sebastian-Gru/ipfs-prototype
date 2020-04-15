@@ -4,6 +4,7 @@
   <q-page
     ref="pageChat"
     class="page-chat flex column">
+
     <div
       class="q-pa-md fixed-top-right z-top q-mt-xl"
      >
@@ -88,7 +89,7 @@
       return{
           newMessage: '',
           model: null,
-          showMessages: false
+          showMessages: false,
 
       }
 
@@ -119,6 +120,12 @@
           intervallIPFS: 'DataStore/intervallIPFS',
           uploadFile: 'DataStore/uploadFile'
       }),
+
+        open (position) {
+            this.position = position
+            this.dialog = true
+        },
+
 
         uploadFiletoIPFS(){
 
@@ -156,8 +163,9 @@
                 if (Object.keys(val).length) {
                     this.scrollToBottom()
                 }
-            }
+            },
         },
+
 
     created () {
         if(!this.IPFSChatInstance){

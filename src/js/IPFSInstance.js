@@ -3,6 +3,7 @@ import BufferPackage from 'buffer';
 import { saveAs } from 'file-saver';
 const Buffer = BufferPackage.Buffer;
 
+
 let node = null;
 
 function IPFSInstance() {
@@ -92,23 +93,25 @@ console.log("This is the node id:: " + node.id);
         })
     }
 
-    async function getFile (hash) {
+    async function getFile (hash, name) {
+
+
 
         const file = await node.get(hash);
 
             const content = Buffer(await file[0].content)
 
-            appendFile( await content)
+            await appendFile(  name,  content)
 
       }
 
-  function appendFile (data) {
+  function appendFile (name, data) {
     const file = new window.Blob([data], { type: 'application/octet-binary' })
     const url = window.URL.createObjectURL(file)
 
     console.log("AppendFile::::::");
     console.log(url);
-    saveAs(url, "image.png");
+    saveAs(url, name);
 
   }
 

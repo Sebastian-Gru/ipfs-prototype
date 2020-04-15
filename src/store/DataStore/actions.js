@@ -1,5 +1,6 @@
 import IPFSInstance from "src/js/IPFSInstance";
 import Notify from "quasar/src/plugins/Notify";
+import Dialog  from 'quasar/src/plugins/Dialog'
 
 export function someAction ({ commit },context) {
 
@@ -66,7 +67,28 @@ export function instantiateIPFS({commit, state}){
   const myOwnMessageHandler = (msg) => {
     //hier kommt hoffentlich der Hash an.
     console.log("myOwnMessageHandler::: " + msg.data.toString());
-    state.IPFSChatInstance.getFile(msg.data.toString());
+    let data = msg.data.toString();
+    let hash = data.split(':')[0];
+    let name = data.slice(data.split(':')[0].length+1)
+    if (msg.from !== state.myID){
+
+      Dialog.create({
+        title: "File received",
+        message: `Download: ${name} from ${msg.from}`,
+        position: "bottom",
+        cancel: true,
+        persistent: true
+
+      }).onOk(() => {
+        console.log('OK')
+        state.IPFSChatInstance.getFile(hash, name);
+      }).onCancel(() => {
+        console.log('Cancel')
+      }).onDismiss(() => {
+        console.log('Called on OK or Cancel')
+      })
+
+    }
   }
 }
 
@@ -120,11 +142,12 @@ export function uploadFile ({commit, state}, model) {
 
     let hashReturn = await state.IPFSChatInstance.uploadFile(`file.${Math.random()}`, model);
 
-    console.log("FileHash: " +hashReturn[1]);
+    console.log("FileHash: " + hashReturn[1]);
 
-    state.IPFSChatInstance.sendNewMsg('file-sharing-by-sebastian', hashReturn[1]);
 
-    state.IPFSChatInstance.getFile(hashReturn[1]);
+    state.IPFSChatInstance.sendNewMsg('file-sharing-by-sebastian', `${hashReturn[1]}:${model.name}`);
+
+    //state.IPFSChatInstance.getFile(hashReturn[1]);
 
     return hashReturn[0];
 
