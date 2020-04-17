@@ -179,6 +179,10 @@ const mapNodeIDToName = (nodeid, peers) =>  {
   return nodeid;
 }
 
+const changeSelected = (selected) => {
+  console.log(selected);
+}
+
 
 
 

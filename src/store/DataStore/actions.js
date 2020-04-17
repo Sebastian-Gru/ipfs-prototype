@@ -55,6 +55,7 @@ export function instantiateIPFS({commit, state}){
     //console.log("Peers!!: "+ peers);
     commit('peerName', msg)
 
+
   };
 
 
@@ -67,7 +68,38 @@ export function instantiateIPFS({commit, state}){
   }
 
   const myOwnFileHandler = (msg) => {
-    console.log(msg);
+
+
+    let data = msg.data.toString();
+    if(data.split(':')[0] == state.myID){
+
+      let hash = data.split(':')[1].length+1;
+      let name = data.slice(data.split(':')[2].length+1)
+      if (msg.from !== state.myID){
+
+        commit('fileCommiter', msg);
+
+        Dialog.create({
+          title: "File received",
+          message: `Download: ${name} from ${msg.from}`,
+          position: "bottom",
+          cancel: true,
+          persistent: true
+
+        }).onOk(() => {
+          console.log('OK')
+          state.IPFSChatInstance.getFile(hash, name);
+        }).onCancel(() => {
+          console.log('Cancel')
+        }).onDismiss(() => {
+          console.log('Called on OK or Cancel')
+        })
+      }
+
+
+    }
+
+
   }
 
   const myOwnMessageHandler = (msg) => {
@@ -178,6 +210,29 @@ export function uploadFile ({commit, state}, model) {
       state.IPFSChatInstance.sendNewMsg('private-chat', `${state.selectedPeer}:<a target="_blank" href="${value}"> ${model.name} </a>`);
 
   }).catch(err => console.log(err));
+
+}
+
+export function uploadFileToSharingPannel ({commit, state}, model) {
+
+
+  async function  uploadFunc() {
+
+
+    let hashReturn = await state.IPFSChatInstance.uploadFile(`file.${Math.random()}`, model);
+
+    console.log("FileHash: " + hashReturn[1]);
+
+    state.peers.forEach((peer) => {
+      if (peer.selected){
+        state.IPFSChatInstance.sendNewMsg('file-sharing-2-by-sebastian', `${peer.selected}:${hashReturn[1]}:${model.name}`);
+      }
+      });
+
+  }
+
+
+  uploadFunc().catch(err => console.log(err));
 
 }
 

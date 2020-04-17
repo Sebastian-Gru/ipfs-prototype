@@ -97,7 +97,7 @@
 </template>
 
 <script>
-  import {mapGetters} from 'vuex'
+  import {mapGetters, mapActions, mapMutations} from 'vuex'
     export default {
         data(){
             return {
@@ -115,12 +115,18 @@
 
         },
         methods: {
+            ...mapActions({
+                uploadFileToSharingPannel: 'DataStore/uploadFileToSharingPannel'
+            }),
+            ...mapMutations({
+                changeSelected: 'DataStore/changeSelected'
+            }),
           sendMessage(){
               console.log("Hello");
           },
 
           uploadFiletoIPFS(){
-              console.log("Hello");
+              this.uploadFileToSharingPannel(this.model);
 
             },
           logItemName(name, hash){
