@@ -43,6 +43,12 @@ export function selectedPeerGetter(state) {
 
 }
 
+export function fileGetter(state) {
+
+  return state.allFiles
+
+}
+
 
 
 

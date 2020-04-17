@@ -5,6 +5,7 @@
     ref="pageChat"
     class="page-chat flex column">
 
+
     <div
       class="q-pa-md fixed-top-right z-top q-mt-xl"
      >
@@ -38,6 +39,8 @@
         :sent="message.from == myID|| message.from == myName"
       />
     </div>
+
+
 
 
     <q-footer elevated>

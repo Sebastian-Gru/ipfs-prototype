@@ -28,6 +28,8 @@ export function instantiateIPFS({commit, state}){
 
       IPFSChatInstance.newSubscribe('file-sharing-by-sebastian', myOwnMessageHandler);
 
+      IPFSChatInstance.newSubscribe('file-sharing-2-by-sebastian', myOwnFileHandler);
+
     }).catch(e=>{
       console.log(e);
   });
@@ -64,6 +66,10 @@ export function instantiateIPFS({commit, state}){
     commit('privateMessageCommiter', msg);
   }
 
+  const myOwnFileHandler = (msg) => {
+    console.log(msg);
+  }
+
   const myOwnMessageHandler = (msg) => {
     //hier kommt hoffentlich der Hash an.
     console.log("myOwnMessageHandler::: " + msg.data.toString());
@@ -71,6 +77,8 @@ export function instantiateIPFS({commit, state}){
     let hash = data.split(':')[0];
     let name = data.slice(data.split(':')[0].length+1)
     if (msg.from !== state.myID){
+
+      commit('fileCommiter', msg);
 
       Dialog.create({
         title: "File received",
@@ -87,7 +95,6 @@ export function instantiateIPFS({commit, state}){
       }).onDismiss(() => {
         console.log('Called on OK or Cancel')
       })
-
     }
   }
 }
@@ -102,28 +109,36 @@ export function intervallIPFS({commit, state}) {
       if (peersComing && peersComing.length) {
 
         //if i have no peers accept everything
-        if (state.peers.length === 0)
+        if (state.peers.length === 0){
+          commit('peerChange',  peersComing.map(peerID => ({ name: '', nodeid: peerID, online: true, checked: false })))
 
-          commit('peerChange',  peersComing.map(peerID => ({ name: '', nodeid: peerID })))
+        }else {
+          //else i have peers and i am not gonna empty them => adding the new ones only.
+          let existingPeers = state.peers.slice();
+          let existingPeersIDs = existingPeers.map(peer => peer.nodeid);
+
+          existingPeers.map((x) => {
+            if (!peersComing.includes(x.nodeid)) return x.online = false;
+          });
+
+          peersComing.forEach(peerID => {
+            if (existingPeersIDs.indexOf(peerID) === -1) {
+              existingPeers.push({ name: '', nodeid: peerID, online: true, checked: false })
+            }
+          });
+          existingPeers.sort(function(a, b){
+            return b.online-a.online
+          })
+
+          if(state.peers !== existingPeers)
+            commit('peerChange',  existingPeers)
+
+        }
+
+        }
 
 
-        //else i have peers and i am not gonna empty them => adding the new ones only.
-        let existingPeers = state.peers.slice();
-        let existingPeersIDs = existingPeers.map(peer => peer.nodeid);
-
-        peersComing.forEach(peerID => {
-          if (existingPeersIDs.indexOf(peerID) === -1) {
-            existingPeers.push({ name: '', nodeid: peerID })
-          }
-        });
-        // console.log("existingPeers: "+existingPeers);
-        //this.peers.push(existingPeers);
-        if(state.peers !== existingPeers)
-        commit('peerChange',  existingPeers)
-
-      }
-
-    }, 3000);
+    }, 10000);
   } catch (error) {
     console.warn(error);
   }
@@ -165,6 +180,9 @@ export function uploadFile ({commit, state}, model) {
   }).catch(err => console.log(err));
 
 }
+
+
+
 
 
 

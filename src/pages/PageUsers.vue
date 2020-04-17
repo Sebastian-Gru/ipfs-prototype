@@ -34,7 +34,7 @@
         </q-item-section>
       </q-item>
       <q-skeleton
-        v-if="peers.length === 1"
+        v-if="peers.length === 0"
         class="q-mt-md"
         animation="pulse-x"/>
     </q-list>

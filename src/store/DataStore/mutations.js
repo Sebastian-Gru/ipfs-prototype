@@ -1,4 +1,5 @@
 import Notify from "quasar/src/plugins/Notify";
+import Dialog from "quasar/src/plugins/Dialog";
 
 
 
@@ -25,6 +26,25 @@ export const peerChange = (state, newPeers) => {
 
   state.peers = newPeers;
 
+}
+
+export const fileCommiter = (state, msg) => {
+
+  let newFiles = Object.assign({}, state.allFiles);
+  let data = msg.data.toString();
+  let hash = data.split(':')[0];
+  let name = data.slice(data.split(':')[0].length + 1);
+  let currentDate = new Date();
+  let dateString = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}    ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+
+  if (msg.from !== state.myID) {
+    newFiles['global'].push({
+      from: msg.from,
+      hash: hash,
+      date: dateString,
+      name: name
+    });
+  }
 }
 
 export const myIDcommit= (state, myID) => {
@@ -158,6 +178,8 @@ const mapNodeIDToName = (nodeid, peers) =>  {
   }
   return nodeid;
 }
+
+
 
 
 
