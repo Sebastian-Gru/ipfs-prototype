@@ -1,56 +1,54 @@
-import IPFSInstance from "src/js/IPFSInstance";
+import IPFSChat from "src/js/IPFSInstance";
 import Notify from "quasar/src/plugins/Notify";
 import Dialog  from 'quasar/src/plugins/Dialog'
 
-export function someAction ({ commit },context) {
-
-  console.log("Hello, this is context: "+ context);
-
-}
 
 
 
 //Hier soll IPFS Instanziiert werden.
-export function instantiateIPFS({commit, state}){
+export async function instantiateIPFS({commit, state}){
 
-  let IPFSChatInstance = new IPFSInstance();
+  const IPFSInstance =  await new IPFSChat();
 
-  IPFSChatInstance.getID()
-    .then(myID => {
-        commit('myIDcommit', myID)
-    })
-    .then(() => {
-      IPFSChatInstance.newSubscribe('global', globalMsgHandler);
-      //Neue Action aufrufen in global message Handler
-      IPFSChatInstance.newSubscribe('name-service', nameServiceHandler);
+  const  myID = await IPFSInstance.getID();
 
-      IPFSChatInstance.newSubscribe('private-chat', privateChatHandler);
+        commit('ipfsInstance', IPFSInstance);
 
-      IPFSChatInstance.newSubscribe('file-sharing-by-sebastian', myOwnMessageHandler);
+        commit('myIDcommit', myID.id)
 
-      IPFSChatInstance.newSubscribe('file-sharing-2-by-sebastian', myOwnFileHandler);
 
-    }).catch(e=>{
-      console.log(e);
-  });
 
-  commit('ipfsInstance', IPFSChatInstance);
+
+
+   state.IPFSInstance.newSubscribe('global', globalMsgHandler);
+    //Neue Action aufrufen in global message Handler
+   state.IPFSInstance.newSubscribe('name-service', nameServiceHandler);
+
+   state.IPFSInstance.newSubscribe('private-chat', privateChatHandler);
+
+   state.IPFSInstance.newSubscribe('file-sharing-by-sebastian', myOwnMessageHandler);
+
+   state.IPFSInstance.newSubscribe('file-sharing-2-by-sebastian', myOwnFileHandler);
+
+
+
 
 //Function that receives the messages
-  const globalMsgHandler = (msg) =>  {
+  function globalMsgHandler (msg)  {
 
     commit('messageCommiter', {msg, ns: 'global'});
     if(state.myID !== msg.from)
-    Notify.create({
-      message: `New Message in Global Chat from ${msg.from}:\n ${msg.data.toString()}!`,
-      position: "top-right"
-    })
+      Notify.create({
+        message: `New Message in Global Chat from ${msg.from}:\n ${msg.data.toString()}!`,
+        position: "top-right"
+      })
+    console.log(msg.data.toString());
   };
 
 
 
   //Function that receives the names of the peers that have names
- const  nameServiceHandler = (msg) =>  {
+  function  nameServiceHandler (msg)  {
 
     //console.log("Peers!!: "+ peers);
     commit('peerName', msg)
@@ -63,11 +61,11 @@ export function instantiateIPFS({commit, state}){
 
   //private Message Handler
 
-  const privateChatHandler = (msg) => {
+  function privateChatHandler (msg) {
     commit('privateMessageCommiter', msg);
   }
 
-  const myOwnFileHandler = (msg) => {
+  function myOwnFileHandler (msg) {
 
 
     let data = msg.data.toString();
@@ -88,7 +86,7 @@ export function instantiateIPFS({commit, state}){
 
         }).onOk(() => {
           console.log('OK')
-          state.IPFSChatInstance.getFile(hash, name);
+          state.IPFSInstance.getFile(hash, name);
         }).onCancel(() => {
           console.log('Cancel')
         }).onDismiss(() => {
@@ -102,7 +100,7 @@ export function instantiateIPFS({commit, state}){
 
   }
 
-  const myOwnMessageHandler = (msg) => {
+  function myOwnMessageHandler (msg) {
     //hier kommt hoffentlich der Hash an.
     console.log("myOwnMessageHandler::: " + msg.data.toString());
     let data = msg.data.toString();
@@ -121,7 +119,7 @@ export function instantiateIPFS({commit, state}){
 
       }).onOk(() => {
         console.log('OK')
-        state.IPFSChatInstance.getFile(hash, name);
+        state.IPFSInstance.getFile(hash, name);
       }).onCancel(() => {
         console.log('Cancel')
       }).onDismiss(() => {
@@ -129,6 +127,7 @@ export function instantiateIPFS({commit, state}){
       })
     }
   }
+
 }
 
 
@@ -137,7 +136,7 @@ export function intervallIPFS({commit, state}) {
   try {
     setInterval(async () => {
 
-      let peersComing = await state.IPFSChatInstance.getPeers('global');
+      let peersComing = await state.IPFSInstance.getPeers('global');
       if (peersComing && peersComing.length) {
 
         //if i have no peers accept everything
@@ -177,7 +176,7 @@ export function intervallIPFS({commit, state}) {
 
   setInterval(() => {
     if (state.myName)
-      state.IPFSChatInstance.sendNewMsg('name-service', state.myName)
+      state.IPFSInstance.sendNewMsg('name-service', state.myName)
   }, 50000)
 
 }
@@ -187,14 +186,14 @@ export function uploadFile ({commit, state}, model) {
   async function  uploadFunc() {
 
 
-    let hashReturn = await state.IPFSChatInstance.uploadFile(`file.${Math.random()}`, model);
+    let hashReturn = await state.IPFSInstance.uploadFile(`file.${Math.random()}`, model);
 
     console.log("FileHash: " + hashReturn[1]);
 
 
-    state.IPFSChatInstance.sendNewMsg('file-sharing-by-sebastian', `${hashReturn[1]}:${model.name}`);
+    state.IPFSInstance.sendNewMsg('file-sharing-by-sebastian', `${hashReturn[1]}:${model.name}`);
 
-    //state.IPFSChatInstance.getFile(hashReturn[1]);
+    //state.IPFSInstance.getFile(hashReturn[1]);
 
     return hashReturn[0];
 
@@ -205,9 +204,9 @@ export function uploadFile ({commit, state}, model) {
 
 
     if(state.selectedPeer === 'global')
-      state.IPFSChatInstance.sendNewMsg('global', `<a target="_blank" href="${value}"> ${model.name} </a>`);
+      state.IPFSInstance.sendNewMsg('global', `<a target="_blank" href="${value}"> ${model.name} </a>`);
     else
-      state.IPFSChatInstance.sendNewMsg('private-chat', `${state.selectedPeer}:<a target="_blank" href="${value}"> ${model.name} </a>`);
+      state.IPFSInstance.sendNewMsg('private-chat', `${state.selectedPeer}:<a target="_blank" href="${value}"> ${model.name} </a>`);
 
   }).catch(err => console.log(err));
 
@@ -219,13 +218,13 @@ export function uploadFileToSharingPannel ({commit, state}, model) {
   async function  uploadFunc() {
 
 
-    let hashReturn = await state.IPFSChatInstance.uploadFile(`file.${Math.random()}`, model);
+    let hashReturn = await state.IPFSInstance.uploadFile(`file.${Math.random()}`, model);
 
     console.log("FileHash: " + hashReturn[1]);
 
     state.peers.forEach((peer) => {
       if (peer.selected){
-        state.IPFSChatInstance.sendNewMsg('file-sharing-2-by-sebastian', `${peer.selected}:${hashReturn[1]}:${model.name}`);
+        state.IPFSInstance.sendNewMsg('file-sharing-2-by-sebastian', `${peer.selected}:${hashReturn[1]}:${model.name}`);
       }
       });
 

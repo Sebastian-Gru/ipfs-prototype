@@ -83,11 +83,10 @@
             ...mapGetters({
                 allMessages: 'DataStore/messageGetter',
                 peers: 'DataStore/peerGetter',
-                IPFSChatInstance: 'DataStore/IPFSChatInstanceGetter',
+                IPFSInstance: 'DataStore/IPFSInstanceGetter',
                 myID: 'DataStore/myIDGetter',
                 myName:'DataStore/myNameGetter',
                 currentMsg: 'DataStore/currentMsgGetter',
-                selectedPeer: 'DataStore/selectedPeerGetter',
             })
         },
         methods: {
@@ -115,14 +114,13 @@
             },
 
 
-            sendMessage() {
+            async sendMessage() {
                 if (this.newMessage != '') {
 
-                    console.log("selectedPeer: " + this.selectedPeer);
-                    if (this.selectedPeer == 'global')
-                        this.IPFSChatInstance.sendNewMsg('global', this.newMessage);
-                    else
-                        this.IPFSChatInstance.sendNewMsg('private-chat', `${this.selectedPeer}:${this.newMessage}`);
+                    console.log("selectedPeer: " + 'global');
+
+                        await this.IPFSInstance.sendNewMsg('global', this.newMessage);
+
                     this.newMessage = '';
                     this.$refs.newMessage.focus()
                     this.scrollToBottom()
@@ -147,13 +145,13 @@
 
 
         created () {
-            if(!this.IPFSChatInstance){
+            if(!this.IPFSInstance){
                 this.instantiateIPFS();
                 this.someAction();
             }
         },
         mounted() {
-            if(!this.IPFSChatInstance)
+            if(!this.IPFSInstance)
                 this.intervallIPFS();
         }
     }

@@ -16,9 +16,9 @@ export function peerGetter (state) {
   return state.peers
 
 }
-export function IPFSChatInstanceGetter (state) {
+export function IPFSInstanceGetter (state) {
 
-  return state.IPFSChatInstance
+  return state.IPFSInstance
 
 }
 

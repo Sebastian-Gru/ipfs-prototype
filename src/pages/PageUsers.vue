@@ -12,7 +12,7 @@
         @mousedown="changePeer(user.nodeid)"
         to="/chat"
         clickable v-ripple
-        >
+      >
 
         <q-item-section avatar>
           <q-avatar color="primary" text-color="white">
@@ -21,7 +21,7 @@
         </q-item-section>
 
         <q-item-section>
-          <q-item-label>{{  user.name? user.name: user.nodeid }}</q-item-label>
+          <q-item-label>{{ user.name? user.name: user.nodeid }}</q-item-label>
         </q-item-section>
 
         <q-item-section side>
@@ -48,7 +48,7 @@
         {{myID}}
       </q-card-section>
       <q-card-section class="q-pt-none">
-        <div class="text-h6">Your name: </div>
+        <div class="text-h6">Your name:</div>
         {{myComputedName? myComputedName: "Anonym"}}
       </q-card-section>
 
@@ -61,7 +61,7 @@
           filled
           clearable
         />
-        <div class="float-right " >
+        <div class="float-right ">
           <q-btn label="Submit" type="submit" color="primary"/>
         </div>
       </q-form>
@@ -72,18 +72,18 @@
 </template>
 
 <script>
-  import {mapGetters, mapActions, mapMutations} from 'vuex'
+    import {mapGetters, mapActions, mapMutations} from 'vuex'
 
     export default {
-      data(){
-          return{
-              name: "",
-          }
-      },
+        data() {
+            return {
+                name: "",
+            }
+        },
         computed: {
 
             ...mapGetters({
-                IPFSChatInstance: 'DataStore/IPFSChatInstanceGetter',
+                IPFSInstance: 'DataStore/IPFSInstanceGetter',
                 userList: 'DataStore/userListGetter',
                 peers: 'DataStore/peerGetter',
                 myID: 'DataStore/myIDGetter',
@@ -92,34 +92,32 @@
         },
         methods: {
             ...mapActions({
-                someAction: 'DataStore/someAction',
                 instantiateIPFS: 'DataStore/instantiateIPFS',
                 intervallIPFS: 'DataStore/intervallIPFS'
             }),
             ...mapMutations({
-              myName: 'DataStore/myNameChange',
-              changeSelectedPeer: 'DataStore/changeSelectedPeer'
+                myName: 'DataStore/myNameChange',
+                changeSelectedPeer: 'DataStore/changeSelectedPeer'
             }),
 
-            onSubmit(){
-                if(this.name != "")
-                  this.myName(this.name);
+            onSubmit() {
+                if (this.name != "")
+                    this.myName(this.name);
                 this.name = "";
             },
-            changePeer(x){
+            changePeer(x) {
                 console.log("User: " + x);
                 this.changeSelectedPeer(x);
             }
         },
-        created () {
-          if(!this.IPFSChatInstance){
-              this.instantiateIPFS();
-              this.someAction();
-          }
+        created() {
+            if (!this.IPFSInstance) {
+                this.instantiateIPFS();
+            }
 
         },
         mounted() {
-                this.intervallIPFS();
+            this.intervallIPFS();
         }
 
     }

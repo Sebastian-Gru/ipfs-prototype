@@ -4,24 +4,40 @@ import { saveAs } from 'file-saver';
 const Buffer = BufferPackage.Buffer;
 
 
+
+
+
 let node = null;
 
-function IPFSInstance() {
-    this.ready = false;
+async function IPFSInstance() {
 
-    node = new IPFS({
-        repo: (() => `repo-${Math.random()}`)(),
-        config: {
-            Addresses: {
-                Swarm: [
-                    '/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star'
-                ]
-            }
-        }
+  this.ready = false;
+
+    node =  await IPFS.create({
+      repo: 'ipfs-' + Math.random(),
+      config: {
+        Addresses: {
+          Swarm: [
+            // This is a public webrtc-star server
+            //'/dns4/star-signal.cloud.ipfs.team/tcp/443/wss/p2p-webrtc-star'
+            //'/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-webrtc-star',
+             "/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star"
+            // "/dns4/ws-star-signal-1.servep2p.com/tcp/443/wss/p2p-websocket-star/"
+            // '/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star'
+            // '/ip4/127.0.0.1/tcp/13579/wss/p2p-webrtc-star'
+
+
+            //'/ip4/127.0.0.1/tcp/13579/wss/p2p-webrtc-star'
+          ]
+
+        },
+        // If you want to connect to the public bootstrap nodes, remove the next line
+       // Bootstrap: []
+      },
     });
 
 
-console.log("This is the node id:: " + node.id);
+
 
     async function uploadFile(fileName, fileContent){
 
@@ -39,58 +55,56 @@ console.log("This is the node id:: " + node.id);
 
     }
 
-    function getID(callback) {
-        return new Promise((resolve, reject) => {
-
-            node.on('ready', async () => {
-                let nodeID = await node.id();
-                this.ready = true;
-                resolve(nodeID.id)
-            })
-
-        })
+    async function getID() {
+        this.ready = true
+        return await node.id();
     }
 
-    function newSubscribe(topic, receiveMsg) {
-        if (!this.ready) return;
+    // function newSubscribe(topic, receiveMsg) {
+    //     if (!this.ready) return;
+    //
+    //     node.pubsub.subscribe(topic, receiveMsg, (error) => {
+    //         if (error) {
+    //             console.error(`failed to subscribe to ${topic}, ${error}`)
+    //         }
+    //         console.log(`subscribed to ${topic}`)
+    //     })
+    //
+    // }
 
-        node.pubsub.subscribe(topic, receiveMsg, (error) => {
-            if (error) {
-                console.error(`failed to subscribe to ${topic}, ${error}`)
-            }
-            console.log(`subscribed to ${topic}`)
-        })
+   const newSubscribe =  (topic, receiveMsg) => {
+     node.pubsub.subscribe(topic, receiveMsg)
+     console.log(`Subscribed to workspace ${topic}`)
+  };
 
-    }
+    async function getPeers(topic) {
 
-    function getPeers(topic) {
+      console.log(node);
+      console.log(topic);
+      const peers = await node.pubsub.peers('global');
+      //const peers = await node.swarm.peers();
+      //const filterPeers = peers.map(x => x.peer);
+      const topics = await node.pubsub.ls()
+      console.log(topics)
+      console.log(peers)
 
-        return new Promise((resolve, reject) => {
-            if (!this.ready) reject('');
+      return peers;
 
-            node.pubsub.peers(topic, (error, peersIDs) => {
-                if (error) {
-                    reject(`failed to get peers subscribed to ${topic}, ${error}`)
-                }
-                // console.log('found these peers', peersIDs)
-                resolve(peersIDs)
-            })
-
-        })
     }
 
 
-    function sendNewMsg(topic, newMsg) {
-    	//console.log('sendNewMsg received: ', newMsg)
+   async  function sendNewMsg(topic, newMsg) {
+
+
+
+        console.log("Message is beeing send!");
+        //console.log('sendNewMsg received: ', newMsg)
         const msg = Buffer.from(newMsg);
 
-        node.pubsub.publish(topic, msg, (err) => {
-            if (err) {
-                return console.error(`failed to publish to ${topic}`, err)
-            }
-            // msg was broadcasted
-           // console.log(`published to ${topic}`)
-        })
+        return await node.pubsub.publish(topic, msg)
+
+
+
     }
 
     async function getFile (hash, name) {

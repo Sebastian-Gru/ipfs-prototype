@@ -28,6 +28,7 @@
               <q-item-label>From: {{file.from}}</q-item-label>
             </q-item-section>
             <q-item-section side>
+
               <q-badge
                 :color="fileOnline(file.from) ? 'light-green-5' : 'grey-4'">
                 {{ fileOnline(file.from)? 'Online': 'Offline' }}
@@ -110,7 +111,7 @@
             ...mapGetters({
                 files: 'DataStore/fileGetter',
                 peers: 'DataStore/peerGetter',
-                IPFSChatInstance: 'DataStore/IPFSChatInstanceGetter'
+                IPFSInstance: 'DataStore/IPFSInstanceGetter'
             })
 
         },
@@ -130,7 +131,7 @@
 
             },
           logItemName(name, hash){
-              this.IPFSChatInstance.getFile(hash, name);
+              this.IPFSInstance.getFile(hash, name);
           },
           fileOnline(hash){
               //not implemented yet

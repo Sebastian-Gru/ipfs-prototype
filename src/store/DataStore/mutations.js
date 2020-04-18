@@ -16,7 +16,7 @@ export const ipfsInstance = (state, ipfs, id) => {
   console.log("This is state " + state);
   console.log("This is ipfs " + state);
   console.log("This is id " + id);
-  state.IPFSChatInstance = ipfs;
+  state.IPFSInstance = ipfs;
   state.myID = id;
   console.log("My ID: " +state.myID)
 

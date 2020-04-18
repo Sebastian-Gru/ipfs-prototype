@@ -33,7 +33,7 @@ export default function () {
     },
     peers: [
     ],
-    IPFSChatInstance: null,
+    IPFSInstance: null,
     myID: "",
     myName: "",
     currentMsg: '',
