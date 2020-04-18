@@ -20,19 +20,21 @@ async function IPFSInstance() {
           Swarm: [
             // This is a public webrtc-star server
             //'/dns4/star-signal.cloud.ipfs.team/tcp/443/wss/p2p-webrtc-star'
-            //'/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-webrtc-star',
-             "/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star"
+            // '/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-webrtc-star',
+            //  "/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star"
             // "/dns4/ws-star-signal-1.servep2p.com/tcp/443/wss/p2p-websocket-star/"
             // '/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star'
             // '/ip4/127.0.0.1/tcp/13579/wss/p2p-webrtc-star'
 
 
-            //'/ip4/127.0.0.1/tcp/13579/wss/p2p-webrtc-star'
+            '/ip4/127.0.0.1/tcp/13579/wss/p2p-webrtc-star'
           ]
 
         },
         // If you want to connect to the public bootstrap nodes, remove the next line
-       // Bootstrap: []
+        // Bootstrap: [
+        //   // '/ip4/127.0.0.1/tcp/4001/ipfs/QmQYtnM6PZjHjVYbWSLAk1FNtJFf4dP8NaHfg5a42huPb4'
+        // ]
       },
     });
 
@@ -79,14 +81,14 @@ async function IPFSInstance() {
 
     async function getPeers(topic) {
 
-      console.log(node);
+      //console.log(node);
       console.log(topic);
       const peers = await node.pubsub.peers('global');
-      //const peers = await node.swarm.peers();
+     // const peers = await node.swarm.peers();
       //const filterPeers = peers.map(x => x.peer);
       const topics = await node.pubsub.ls()
       console.log(topics)
-      console.log(peers)
+      //console.log(filterPeers)
 
       return peers;
 
