@@ -45,15 +45,25 @@ async function IPFSInstance() {
 
     	if(!this.ready) return;
 
-    	  const filesAdded = await node.add({
-            path: fileName,
-            content: fileContent
-        });
+    	console.log(fileName + fileContent)
+    	  // const filesAdded = await node.add({
+        //     path: fileName,
+        //     content: fileContent
+        // });
 
-		  console.log('file link',`https://ipfs.io/ipfs/${filesAdded[0].hash}`);
+      for await (const result of node.add(fileContent)) {
+
+        if(result)
+        return [`https://ipfs.io/ipfs/${result.path}`, result.path];
+
+      }
+
+    	//   console.log(filesAdded);
+      //
+		  // console.log('file link',`https://ipfs.io/ipfs/${filesAdded[0].hash}`);
 
 
-      return [`https://ipfs.io/ipfs/${filesAdded[0].hash}`, filesAdded[0].hash];
+      //return [`https://ipfs.io/ipfs/${filesAdded[0].hash}`, filesAdded[0].hash];
 
     }
 
