@@ -2,6 +2,9 @@ import IPFS from 'ipfs';
 import BufferPackage from 'buffer';
 import { saveAs } from 'file-saver';
 const Buffer = BufferPackage.Buffer;
+const BufferList = require('bl/BufferList');
+const all = require('it-all')
+
 
 
 
@@ -24,10 +27,12 @@ async function IPFSInstance() {
             //  "/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star"
             // "/dns4/ws-star-signal-1.servep2p.com/tcp/443/wss/p2p-websocket-star/"
             // '/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star'
-            // '/ip4/127.0.0.1/tcp/13579/wss/p2p-webrtc-star'
+           // '/ip4/127.0.0.1/tcp/13579/wss/p2p-webrtc-star'
+            '/dns4/3bde7304.ngrok.io/tcp/80/ws/p2p-webrtc-star/'
 
 
-            '/ip4/127.0.0.1/tcp/13579/wss/p2p-webrtc-star'
+            // '/ip4/192.168.178.82/tcp/13579/wss/p2p-webrtc-star'
+            // '/dns4/star-signal.cloud.ipfs.team/wss/p2p-webrtc-star'
           ]
 
         },
@@ -89,16 +94,9 @@ async function IPFSInstance() {
      console.log(`Subscribed to workspace ${topic}`)
   };
 
-    async function getPeers(topic) {
+    async function getPeers() {
 
-      //console.log(node);
-      console.log(topic);
       const peers = await node.pubsub.peers('global');
-     // const peers = await node.swarm.peers();
-      //const filterPeers = peers.map(x => x.peer);
-      const topics = await node.pubsub.ls()
-      console.log(topics)
-      //console.log(filterPeers)
 
       return peers;
 
@@ -121,13 +119,29 @@ async function IPFSInstance() {
 
     async function getFile (hash, name) {
 
+        // const file = await node.get(hash);
+        //
+        //     const content = Buffer(await file[0].content)
+        //
+        //     await appendFile(  name,  content)
 
+        // for await (const file of node.get(hash)) {
+        //   console.log(file.path);
+        //
+        //   const content = new BufferList();
+        //   for await (const chunk of file.content) {
+        //     content.append(chunk)
+        //   }
+        //
+        //   appendFile(name, content.toString())
+        // }
 
-        const file = await node.get(hash);
-
-            const content = Buffer(await file[0].content)
-
-            await appendFile(  name,  content)
+      for await (const file of node.get(hash)) {
+        if (file.content) {
+          const content = Buffer.concat(await all(file.content))
+          await appendFile(name, content)
+        }
+      }
 
       }
 

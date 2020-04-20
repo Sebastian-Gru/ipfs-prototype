@@ -1,6 +1,7 @@
 import IPFSChat from "src/js/IPFSInstance";
 import Notify from "quasar/src/plugins/Notify";
 import Dialog  from 'quasar/src/plugins/Dialog'
+import Router from '../../router/index';
 
 
 
@@ -41,7 +42,7 @@ export async function instantiateIPFS({commit, state}){
       Notify.create({
         message: `New Message in Global Chat from ${msg.from}:\n ${msg.data.toString()}!`,
         position: "top-right"
-      })
+      });
     console.log(msg.data.toString());
   };
 
@@ -65,17 +66,21 @@ export async function instantiateIPFS({commit, state}){
     commit('privateMessageCommiter', msg);
   }
 
+
+
+  //Files nur an richtigen Peer schicken
   function myOwnFileHandler (msg) {
 
+    const receivedData = msg.data.toString().split(":")
 
-    let data = msg.data.toString();
-    if(data.split(':')[0] == state.myID){
+    if (msg.from !== state.myID){
+    if(receivedData[2] == state.myID){
 
-      let hash = data.split(':')[1].length+1;
-      let name = data.slice(data.split(':')[2].length+1)
-      if (msg.from !== state.myID){
+      let hash = receivedData[0];
+      let name = receivedData[1];
+      receivedData.push(msg.from)
 
-        commit('fileCommiter', msg);
+        commit('fileCommiter', receivedData);
 
         Dialog.create({
           title: "File received",
@@ -94,10 +99,7 @@ export async function instantiateIPFS({commit, state}){
         })
       }
 
-
     }
-
-
   }
 
   function myOwnMessageHandler (msg) {
@@ -181,7 +183,9 @@ export function intervallIPFS({commit, state}) {
 
 }
 
-export function uploadFile ({commit, state}, model) {
+export function uploadFileToSelectedPeer ({commit, state}, model) {
+
+  console.log(state.selectedPeer);
 
   async function  uploadFunc() {
 
@@ -191,7 +195,10 @@ export function uploadFile ({commit, state}, model) {
     console.log("FileHash: " + hashReturn[1]);
 
 
-    state.IPFSInstance.sendNewMsg('file-sharing-by-sebastian', `${hashReturn[1]}:${model.name}`);
+
+      await state.IPFSInstance.sendNewMsg('file-sharing-2-by-sebastian', `${hashReturn[1]}:${model.name}:${state.selectedPeer}`);
+
+
 
     //state.IPFSInstance.getFile(hashReturn[1]);
 

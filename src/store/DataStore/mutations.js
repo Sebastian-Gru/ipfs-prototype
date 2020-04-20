@@ -28,23 +28,21 @@ export const peerChange = (state, newPeers) => {
 
 }
 
-export const fileCommiter = (state, msg) => {
+export const fileCommiter = (state, receivedData) => {
 
   let newFiles = Object.assign({}, state.allFiles);
-  let data = msg.data.toString();
-  let hash = data.split(':')[0];
-  let name = data.slice(data.split(':')[0].length + 1);
+  let hash = receivedData[0];
+  let name = receivedData[1];
   let currentDate = new Date();
   let dateString = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}    ${currentDate.getHours()}:${currentDate.getMinutes()}`;
 
-  if (msg.from !== state.myID) {
     newFiles['global'].push({
-      from: msg.from,
+      from: receivedData[3],
       hash: hash,
       date: dateString,
       name: name
     });
-  }
+
 }
 
 export const myIDcommit= (state, myID) => {

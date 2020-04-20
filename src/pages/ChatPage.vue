@@ -121,7 +121,7 @@
           someAction: 'DataStore/someAction',
           instantiateIPFS: 'DataStore/instantiateIPFS',
           intervallIPFS: 'DataStore/intervallIPFS',
-          uploadFile: 'DataStore/uploadFile'
+          uploadFileToSelectedPeer: 'DataStore/uploadFileToSelectedPeer'
       }),
 
         open (position) {
@@ -131,10 +131,7 @@
 
 
         uploadFiletoIPFS(){
-
-            this.uploadFile(this.model);
-            //this.model = "";
-
+            this.uploadFileToSelectedPeer(this.model, [this.selectedPeer]);
         },
 
 

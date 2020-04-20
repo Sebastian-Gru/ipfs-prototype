@@ -23,7 +23,9 @@
     "vue": "latest",
     "vue-router": "latest",
     "vuex": "latest",
-    "libp2p-webrtc-star": "latest"
+    "libp2p-webrtc-star": "latest",
+    "bl": "latest",
+    "it-all": "latest"
   },
   "devDependencies": {
     "@quasar/app": "^1.0.0",
