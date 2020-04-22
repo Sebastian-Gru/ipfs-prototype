@@ -5,20 +5,34 @@
     ref="pageFeed"
     class="page-chat flex column">
 
+    <div class="q-pa-md row items-start q-gutter-md justify-center" >
 
     <div
       class="q-pa-md column col justify-end"
-      id="Messages">
-
-      <q-chat-message
+      id="Messages"
+      style="max-width: 800px">
+      <q-list >
+      <q-card
+        class="q-ma-md"
+        flat bordered
         v-for="message in allMessages['global']"
-        :key="message.data + Math.random()"
-        :name="message.from"
-        :stamp="message.date? message.date.slice(10): 'just now' "
-        :text="[message.data]"
-        :sent="message.from == myID|| message.from == myName"
-        :bg-color="message.from == myID|| message.from == myName?  'blue' : 'amber'"
-      />
+        :key="message.data + Math.random()">
+      <q-card-section>
+        <div class="text-overline text-orange-9">{{message.from}}</div>
+        <div class="text-subtitle2">by User</div>
+      </q-card-section>
+        <q-separator v-if="message.img"/>
+        <img v-if="message.img" :src="message.img">
+        <q-separator  />
+      <q-card-section class="q-pt-md">
+        {{ message.data }}
+      </q-card-section>
+        <q-card-section align="right">
+          {{message.date}}
+        </q-card-section>
+      </q-card>
+    </q-list>
+    </div>
     </div>
 
     <q-footer elevated>
@@ -35,10 +49,28 @@
             bg-color="white"
             outlined
             rounded
-            label="Message"
+            label="Write a public Post"
             dense>
 
+
             <template v-slot:after>
+
+              <q-btn-dropdown
+                dropdown-icon="change_history"
+                push color="red" label="Add Image">
+                <q-card class="full-width" flat bordered >
+                  <q-card-section>
+                    <q-form @submit="uploadFiletoIPFS" class="q-gutter-md">
+                      <q-file v-model="model" accept=".jpg, image/*" label="Image">
+                        <template v-if="model" v-slot:append>
+                          <q-icon name="cancel" @click.stop.prevent="model = null" class="cursor-pointer" />
+                        </template>
+                      </q-file>
+                    </q-form>
+                  </q-card-section>
+                </q-card>
+              </q-btn-dropdown>
+
               <q-btn
                 @click="sendMessage"
                 round
@@ -48,6 +80,7 @@
                 color="white"
                 icon="send" />
 
+
             </template>
           </q-input>
 
@@ -56,6 +89,7 @@
       </q-toolbar>
 
     </q-footer>
+
   </q-page>
 </template>
 
@@ -64,15 +98,12 @@
     import {mapGetters, mapState, mapActions} from 'vuex'
     export default {
 
-
-
         data () {
             return{
                 newMessage: '',
                 model: null,
 
             }
-
         },
         computed:  {
 
@@ -97,7 +128,8 @@
                 someAction: 'DataStore/someAction',
                 instantiateIPFS: 'DataStore/instantiateIPFS',
                 intervallIPFS: 'DataStore/intervallIPFS',
-                uploadFile: 'DataStore/uploadFile'
+                uploadFile: 'DataStore/uploadFile',
+                simpleUpload: 'DataStore/simpleUpload',
             }),
 
             open (position) {
@@ -117,11 +149,17 @@
             async sendMessage() {
                 if (this.newMessage != '') {
 
-                    console.log("selectedPeer: " + 'global');
+                    let hash = "";
+                    if(this.model){
 
-                        await this.IPFSInstance.sendNewMsg('global', this.newMessage);
+                       hash = await this.simpleUpload(this.model);
+                        console.log("selectedPeer: " + 'global');
+                        await this.IPFSInstance.sendNewMsg('global', `${this.newMessage}:${hash}`);
 
+                    } else
+                        await this.IPFSInstance.sendNewMsg('global', `${this.newMessage}`);
                     this.newMessage = '';
+                    this.model = null;
                     this.$refs.newMessage.focus()
                     this.scrollToBottom()
                 }

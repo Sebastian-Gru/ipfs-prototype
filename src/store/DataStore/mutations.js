@@ -28,6 +28,18 @@ export const peerChange = (state, newPeers) => {
 
 }
 
+export const changeChecked = (state, user) => {
+
+  let peers = state.peers.slice();
+  peers.forEach(peer => {
+    if (peer.nodeid == user) {
+      console.log(peer.checked);
+      peer.checked = !peer.checked;
+    }
+  });
+  state.peers = peers;
+};
+
 export const fileCommiter = (state, receivedData) => {
 
   let newFiles = Object.assign({}, state.allFiles);
@@ -50,17 +62,20 @@ export const myIDcommit= (state, myID) => {
 
 }
 
-export const messageCommiter = (state, {msg, ns} ) => {
+export const messageCommiter = (state, {msg, img} ) => {
 
   let newMessages = Object.assign({}, state.allMessages);
   let currentDate = new Date();
   let dateString = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}    ${currentDate.getHours()}:${currentDate.getMinutes()}`;
 
+  console.log("This is image")
+  console.log(img)
 
   newMessages['global'].push({
     from: msg.from,
-    data: msg.data.toString(),
-    date: dateString
+    data: msg.data.toString().split(":")[0],
+    date: dateString,
+    img: img
   });
 
 
@@ -180,6 +195,17 @@ const mapNodeIDToName = (nodeid, peers) =>  {
 const changeSelected = (selected) => {
   console.log(selected);
 }
+
+
+export const swarmAdressesCommit = (state, swarmAdresses) => {
+
+  state.swarmAdresses = swarmAdresses.map(info => {
+    return info.addrs})
+    .map((addr) => {
+      return addr.toString()
+    }
+  );
+};
 
 
 

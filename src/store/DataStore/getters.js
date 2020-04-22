@@ -49,6 +49,10 @@ export function fileGetter(state) {
 
 }
 
+export function swarmAdressesGetter(state) {
+  return state.swarmAdresses
+}
+
 
 
 

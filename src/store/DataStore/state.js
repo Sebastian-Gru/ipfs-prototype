@@ -38,6 +38,7 @@ export default function () {
     myName: "",
     currentMsg: '',
     selectedPeer: 'global',
+    swarmAdresses: null,
 
   }
 }

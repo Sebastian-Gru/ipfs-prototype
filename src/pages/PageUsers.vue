@@ -42,29 +42,16 @@
     <q-card flat bordered class="my-card fixed-bottom-right q-ma-md q-pa-md">
       <q-card-section>
         <div class="text-h6">Your IPFS CID:</div>
-      </q-card-section>
-
-      <q-card-section class="q-pt-none">
         {{myID}}
       </q-card-section>
+
+      <q-separator inset />
+
       <q-card-section class="q-pt-none">
         <div class="text-h6">Your name:</div>
         {{myComputedName? myComputedName: "Anonym"}}
       </q-card-section>
 
-      <q-form @submit="onSubmit" class="q-gutter-md ">
-        <q-input
-          name="name"
-          v-model="name"
-          color="primary"
-          :label="myComputedName? 'Change Name' : 'Your Name'"
-          filled
-          clearable
-        />
-        <div class="float-right ">
-          <q-btn label="Submit" type="submit" color="primary"/>
-        </div>
-      </q-form>
 
     </q-card>
 

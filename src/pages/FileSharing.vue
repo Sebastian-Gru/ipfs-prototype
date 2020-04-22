@@ -50,18 +50,20 @@
           <q-item-label caption class="q-pl-md q-pb-md"> Select Peer to filter Files and send Files</q-item-label>
           <q-separator spaced />
           <q-item
-            :active="active"
             v-for="user in peers"
             :key="user.nodeid + Math.random()"
             clickable
-            v-ripple>
-            <q-checkbox v-model="user.checked" />
+            v-ripple
+            :active="user.checked == true"
+            active-class="selectedBG"
+            @click="userClicked(user.nodeid)"
+            >
+<!--            <q-checkbox v-model="user.checked" />-->
             <q-item-section avatar>
               <q-avatar color="teal" text-color="white" icon="mood" />
             </q-item-section>
             <q-item-section>
-              <q-item-label overline>{{user.nodeid}}</q-item-label>
-
+              <q-item-label overline>{{user.name? user.name: user.nodeid}}</q-item-label>
             </q-item-section>
             <q-item-section side>
               <q-badge
@@ -83,7 +85,10 @@
 
             <q-file v-model="model" label="Click to choose File to selected Peers" >
 
+
               <q-btn v-slot:after label="Submit" type="submit" color="primary" />
+
+
 
             </q-file>
 
@@ -99,6 +104,7 @@
 
 <script>
   import {mapGetters, mapActions, mapMutations} from 'vuex'
+  import Notify from "quasar/src/plugins/Notify";
     export default {
         data(){
             return {
@@ -120,15 +126,25 @@
                 uploadFileToSharingPannel: 'DataStore/uploadFileToSharingPannel'
             }),
             ...mapMutations({
-                changeSelected: 'DataStore/changeSelected'
+                changeSelected: 'DataStore/changeSelected',
+                changeChecked: 'DataStore/changeChecked'
             }),
+            userClicked(user){
+              console.log(user);
+                this.changeChecked(user);
+            },
           sendMessage(){
               console.log("Hello");
           },
 
           uploadFiletoIPFS(){
+              if(this.model)
               this.uploadFileToSharingPannel(this.model);
-
+              else Notify.create({
+                  message: `No File selected`,
+                  position: "bottom",
+                  type: "negative"}
+              )
             },
           logItemName(name, hash){
               this.IPFSInstance.getFile(hash, name);
@@ -141,3 +157,7 @@
         },
     };
 </script>
+<style lang="sass">
+  .selectedBG
+    background: #F2C037
+</style>

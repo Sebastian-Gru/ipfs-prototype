@@ -27,8 +27,8 @@ async function IPFSInstance() {
             //  "/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star"
             // "/dns4/ws-star-signal-1.servep2p.com/tcp/443/wss/p2p-websocket-star/"
             // '/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star'
-           // '/ip4/127.0.0.1/tcp/13579/wss/p2p-webrtc-star'
-            '/dns4/3bde7304.ngrok.io/tcp/80/ws/p2p-webrtc-star/'
+           '/ip4/127.0.0.1/tcp/13579/wss/p2p-webrtc-star',
+            // '/dns4/96291949.ngrok.io/tcp/80/ws/p2p-webrtc-star/'
 
 
             // '/ip4/192.168.178.82/tcp/13579/wss/p2p-webrtc-star'
@@ -90,15 +90,17 @@ async function IPFSInstance() {
     // }
 
    const newSubscribe =  (topic, receiveMsg) => {
-     node.pubsub.subscribe(topic, receiveMsg)
+
+      node.pubsub.subscribe(topic, receiveMsg)
      console.log(`Subscribed to workspace ${topic}`)
+
   };
 
-    async function getPeers() {
+    async function getPeers(topic) {
 
-      const peers = await node.pubsub.peers('global');
 
-      return peers;
+      let peers = await node.pubsub.peers(topic);
+      return await peers;
 
     }
 
@@ -145,6 +147,24 @@ async function IPFSInstance() {
 
       }
 
+  async function getFile2 (hash) {
+
+    let url = 'https://scontent-dus1-1.xx.fbcdn.net/v/t1.0-9/31154266_1874105465946772_8244928721039917056_o.jpg?_nc_cat=105&_nc_sid=09cbfe&_nc_eui2=AeENrxOpE0kEVwVLNu2M4xv1FnDlvVlbGjIWcOW9WVsaMrJwYW9wXQIFFmdwAGdorRML1BPSq9z12LNR99YLWlbD&_nc_ohc=dmt6B8hrpb4AX8GvuWC&_nc_ht=scontent-dus1-1.xx&oh=a149f70aefc1eb6998675363b9693cc5&oe=5EC65C83'
+
+    for await (const file of node.get(hash)) {
+      if (file.content) {
+        const content = Buffer.concat(await all(file.content))
+       // await appendFile(name, content)
+
+        const xyz = new window.Blob([content], { type: 'application/octet-binary' })
+         url = window.URL.createObjectURL(xyz)
+
+      }
+    }
+    return url;
+     // return 'https://scontent-dus1-1.xx.fbcdn.net/v/t1.0-9/31154266_1874105465946772_8244928721039917056_o.jpg?_nc_cat=105&_nc_sid=09cbfe&_nc_eui2=AeENrxOpE0kEVwVLNu2M4xv1FnDlvVlbGjIWcOW9WVsaMrJwYW9wXQIFFmdwAGdorRML1BPSq9z12LNR99YLWlbD&_nc_ohc=dmt6B8hrpb4AX8GvuWC&_nc_ht=scontent-dus1-1.xx&oh=a149f70aefc1eb6998675363b9693cc5&oe=5EC65C83'
+  }
+
   function appendFile (name, data) {
     const file = new window.Blob([data], { type: 'application/octet-binary' })
     const url = window.URL.createObjectURL(file)
@@ -152,6 +172,22 @@ async function IPFSInstance() {
     console.log("AppendFile::::::");
     console.log(url);
     saveAs(url, name);
+
+  }
+
+  function appendFile2 (name, data) {
+    const file = new window.Blob([data], { type: 'application/octet-binary' })
+    const url = window.URL.createObjectURL(file)
+
+    console.log("AppendFile::::::");
+    console.log(url);
+    return url;
+    //saveAs(url, name);
+  }
+
+  async function swarmAdresses() {
+
+      return await node.swarm.addrs()
 
   }
 
@@ -163,7 +199,9 @@ async function IPFSInstance() {
         getPeers,
         sendNewMsg,
         uploadFile,
-        getFile
+        getFile,
+        getFile2,
+        swarmAdresses
     }
 }
 

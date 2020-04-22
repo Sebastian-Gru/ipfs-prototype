@@ -35,9 +35,37 @@ export async function instantiateIPFS({commit, state}){
 
 
 //Function that receives the messages
-  function globalMsgHandler (msg)  {
+  async function globalMsgHandler (msg)  {
 
-    commit('messageCommiter', {msg, ns: 'global'});
+    console.log("msg")
+    console.log(msg);
+
+    let receivedData = msg.data.toString().split(":");
+
+    if (receivedData.length > 1) {
+
+      console.log("receivedData")
+      console.log(receivedData);
+
+      const imgHash = receivedData[1];
+
+
+      console.log("imgHash")
+      console.log(imgHash)
+
+
+      const img = await IPFSInstance.getFile2(imgHash, "test.png");
+
+      console.log("ImageBlob:")
+      console.log(img);
+
+
+      commit('messageCommiter', {msg, img});
+    } else{
+      commit('messageCommiter', {msg, img: ''});
+    }
+
+
     if(state.myID !== msg.from)
       Notify.create({
         message: `New Message in Global Chat from ${msg.from}:\n ${msg.data.toString()}!`,
@@ -84,7 +112,7 @@ export async function instantiateIPFS({commit, state}){
 
         Dialog.create({
           title: "File received",
-          message: `Download: ${name} from ${msg.from}`,
+          message: `Download: ${name}\n From ${msg.from}`,
           position: "bottom",
           cancel: true,
           persistent: true
@@ -101,6 +129,8 @@ export async function instantiateIPFS({commit, state}){
 
     }
   }
+
+
 
   function myOwnMessageHandler (msg) {
     //hier kommt hoffentlich der Hash an.
@@ -139,6 +169,7 @@ export function intervallIPFS({commit, state}) {
     setInterval(async () => {
 
       let peersComing = await state.IPFSInstance.getPeers('global');
+
       if (peersComing && peersComing.length) {
 
         //if i have no peers accept everything
@@ -150,9 +181,16 @@ export function intervallIPFS({commit, state}) {
           let existingPeers = state.peers.slice();
           let existingPeersIDs = existingPeers.map(peer => peer.nodeid);
 
-          existingPeers.map((x) => {
-            if (!peersComing.includes(x.nodeid)) return x.online = false;
+          console.log("We are here!");
+          console.log(peersComing);
+
+
+          existingPeers.forEach((x) => {
+            if (!peersComing.includes(x.nodeid)) {
+             x.online = false;
+            }
           });
+
 
           peersComing.forEach(peerID => {
             if (existingPeersIDs.indexOf(peerID) === -1) {
@@ -219,7 +257,31 @@ export function uploadFileToSelectedPeer ({commit, state}, model) {
 
 }
 
+export  async function swarmAdresses({commit, state}) {
+
+  const swarmAdresses = await state.IPFSInstance.swarmAdresses();
+  console.log(swarmAdresses);
+
+  commit( 'swarmAdressesCommit', swarmAdresses)
+
+}
+
 export function uploadFileToSharingPannel ({commit, state}, model) {
+
+
+
+  const peers = state.peers.slice().filter(peer => peer.checked)
+
+  if (!peers.length){
+    Notify.create({
+    message: `No Peer was selected!`,
+    position: "bottom",
+    type: "negative"
+
+  });
+  return
+  }
+
 
 
   async function  uploadFunc() {
@@ -229,16 +291,39 @@ export function uploadFileToSharingPannel ({commit, state}, model) {
 
     console.log("FileHash: " + hashReturn[1]);
 
-    state.peers.forEach((peer) => {
-      if (peer.selected){
-        state.IPFSInstance.sendNewMsg('file-sharing-2-by-sebastian', `${peer.selected}:${hashReturn[1]}:${model.name}`);
-      }
-      });
+    return hashReturn[1];
+
 
   }
 
+  uploadFunc().then((hash) => {
 
-  uploadFunc().catch(err => console.log(err));
+    peers.forEach((peer) => {
+
+         state.IPFSInstance.sendNewMsg('file-sharing-2-by-sebastian', `${hash}:${model.name}:${peer.nodeid}`);
+
+    })
+
+    Notify.create({
+      message: `Files was send succefully`,
+      position: "bottom",
+      type: "positive"
+
+    });
+
+  }).catch(err => console.log(err));
+
+
+
+}
+
+export async function simpleUpload({commit, state}, model) {
+
+  let hashReturn = await state.IPFSInstance.uploadFile(`file.${Math.random()}`, model);
+
+  console.log("FileHash: " + hashReturn[1]);
+
+  return await hashReturn[1];
 
 }
 
