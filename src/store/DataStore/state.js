@@ -16,22 +16,29 @@ export default function () {
     allMessages: {
       'global': [
         {
-          from: 'xyz',
-          data: 'Hello!!!'
+          from: 'IPFS - Chat',
+          data: 'Hello User, write a message to everyone!',
         }
       ]
     },
-    peers: [{
-      nodeid: "global",
-      name:"Global Chat",
-      online: true
-    }
+    allFiles: {
+      'global' : [
+        {
+          from: 'Can not be downloaded!',
+          hash: 'https://swapfiets.de/assets/Uploads/deluxe7-eclipseblack-1.jpg',
+          name: 'Testfile.jpg',
+          date: 'XXX'
+        }
+      ]
+    },
+    peers: [
     ],
-    IPFSChatInstance: null,
+    IPFSInstance: null,
     myID: "",
     myName: "",
     currentMsg: '',
     selectedPeer: 'global',
+    swarmAdresses: null,
 
   }
 }

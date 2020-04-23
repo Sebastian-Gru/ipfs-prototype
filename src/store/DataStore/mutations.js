@@ -1,4 +1,5 @@
 import Notify from "quasar/src/plugins/Notify";
+import Dialog from "quasar/src/plugins/Dialog";
 
 
 
@@ -15,7 +16,7 @@ export const ipfsInstance = (state, ipfs, id) => {
   console.log("This is state " + state);
   console.log("This is ipfs " + state);
   console.log("This is id " + id);
-  state.IPFSChatInstance = ipfs;
+  state.IPFSInstance = ipfs;
   state.myID = id;
   console.log("My ID: " +state.myID)
 
@@ -27,22 +28,54 @@ export const peerChange = (state, newPeers) => {
 
 }
 
+export const changeChecked = (state, user) => {
+
+  let peers = state.peers.slice();
+  peers.forEach(peer => {
+    if (peer.nodeid == user) {
+      console.log(peer.checked);
+      peer.checked = !peer.checked;
+    }
+  });
+  state.peers = peers;
+};
+
+export const fileCommiter = (state, receivedData) => {
+
+  let newFiles = Object.assign({}, state.allFiles);
+  let hash = receivedData[0];
+  let name = receivedData[1];
+  let currentDate = new Date();
+  let dateString = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}    ${currentDate.getHours()}:${currentDate.getMinutes()}`;
+
+    newFiles['global'].push({
+      from: receivedData[3],
+      hash: hash,
+      date: dateString,
+      name: name
+    });
+
+}
+
 export const myIDcommit= (state, myID) => {
   state.myID = myID;
 
 }
 
-export const messageCommiter = (state, {msg, ns} ) => {
+export const messageCommiter = (state, {msg, img} ) => {
 
   let newMessages = Object.assign({}, state.allMessages);
   let currentDate = new Date();
   let dateString = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}    ${currentDate.getHours()}:${currentDate.getMinutes()}`;
 
+  console.log("This is image")
+  console.log(img)
 
   newMessages['global'].push({
     from: msg.from,
-    data: msg.data.toString(),
-    date: dateString
+    data: msg.data.toString().split(":")[0],
+    date: dateString,
+    img: img
   });
 
 
@@ -158,6 +191,23 @@ const mapNodeIDToName = (nodeid, peers) =>  {
   }
   return nodeid;
 }
+
+const changeSelected = (selected) => {
+  console.log(selected);
+}
+
+
+export const swarmAdressesCommit = (state, swarmAdresses) => {
+
+  state.swarmAdresses = swarmAdresses.map(info => {
+    return info.addrs})
+    .map((addr) => {
+      return addr.toString()
+    }
+  );
+};
+
+
 
 
 

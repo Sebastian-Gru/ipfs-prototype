@@ -16,9 +16,9 @@ export function peerGetter (state) {
   return state.peers
 
 }
-export function IPFSChatInstanceGetter (state) {
+export function IPFSInstanceGetter (state) {
 
-  return state.IPFSChatInstance
+  return state.IPFSInstance
 
 }
 
@@ -41,6 +41,16 @@ export function selectedPeerGetter(state) {
 
   return state.selectedPeer
 
+}
+
+export function fileGetter(state) {
+
+  return state.allFiles
+
+}
+
+export function swarmAdressesGetter(state) {
+  return state.swarmAdresses
 }
 
 

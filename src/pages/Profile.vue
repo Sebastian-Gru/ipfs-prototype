@@ -1,19 +1,18 @@
 <template>
   <div>
-  <h1>Profile</h1>
     <q-card flat bordered class="my-card q-ma-xl q-pa-xl">
       <q-card-section>
         <div class="text-h6">Your IPFS CID:</div>
-      </q-card-section>
 
-      <q-card-section class="q-pt-none">
         {{myID}}
       </q-card-section>
+      <q-separator inset />
+
       <q-card-section class="q-pt-none">
         <div class="text-h6">Your name: </div>
         {{myComputedName? myComputedName: "Anonym"}}
       </q-card-section>
-
+    <q-card-section>
       <q-form
         @submit="onSubmit" class="full-width">
         <q-input
@@ -26,46 +25,50 @@
         >
         <template v-slot:after>
           <q-btn
-             label="Submit"
+             label="Change"
              type="submit"
              color="primary"
              @click="onSubmit"/>
         </template>
         </q-input>
       </q-form>
+    </q-card-section>
+
+      <q-separator inset />
+
+      <q-card-section class="q-pt-none">
+        <div class="text-h6">Number of connected Peers over Pubsub: </div>
+        {{peers.length}}
+      </q-card-section>
+      <q-card-section >
+        <div class="text-h6">All connected Peers: </div>
+        <q-btn @click="this.swarmAdressesBtn" label="Get connected Peers"/>
+        <q-scroll-area style="height: 550px;" class="q-mt-md">
+      <q-list>
+        <q-card
+          class="q-ma-md"
+          flat bordered
+          v-for="address in swarmAdresses"
+          :key="address">
+          <q-card-section>
+            <h4>Peer</h4>
+          </q-card-section>
+          <q-card-section v-for="singleAdress in address.toString().split(',')" :key="singleAdress">
+            {{singleAdress}}
+          </q-card-section>
+          </q-card>
+      </q-list>
+        </q-scroll-area>
+      </q-card-section>
 
     </q-card>
-
-  <q-separator/>
-
-    <h3>Friends</h3>
-
-    <q-item
-      v-for="friend in friends"
-      clickable v-ripple
-      :key="friend.name"
-    >
-      <q-item-section side>
-        <q-avatar rounded size="100px">
-          <img src="https://cdn.quasar.dev/img/avatar.png" />
-          <q-badge floating color="teal">new</q-badge>
-        </q-avatar>
-      </q-item-section>
-      <q-item-section>
-        <q-item-label>{{friend.name}}</q-item-label>
-        <q-item-label caption>Age: {{friend.age}}</q-item-label>
-      </q-item-section>
-      <q-item-section side>
-        3 min ago
-      </q-item-section>
-    </q-item>
 
 
   </div>
 </template>
 
 <script>
-  import {mapGetters, mapMutations} from 'vuex'
+  import {mapGetters, mapMutations, mapActions} from 'vuex'
     export default {
 
         data(){
@@ -95,12 +98,17 @@
         computed: {
             ...mapGetters({
                 myID: 'DataStore/myIDGetter',
-                myComputedName: 'DataStore/myNameGetter'
+                myComputedName: 'DataStore/myNameGetter',
+                peers: 'DataStore/peerGetter',
+                swarmAdresses: 'DataStore/swarmAdressesGetter'
             })
         },
         methods:{
             ...mapMutations({
                 myName: 'DataStore/myNameChange',
+            }),
+            ...mapActions({
+                swarmAdressesBtn:'DataStore/swarmAdresses',
             }),
             onSubmit(){
                 if(this.name != "")

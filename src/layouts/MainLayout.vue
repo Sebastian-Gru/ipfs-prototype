@@ -24,7 +24,8 @@
         dense
         animated
         v-if="$route.meta.tabs">
-        <q-route-tab to="/" label="Chat" icon="chat"/>
+        <q-route-tab to="/" label="Feed" icon="emoji_people"/>
+        <q-route-tab to="/peers" label="Chat" icon="chat"/>
         <q-route-tab to="/profile" label="Profil" icon="person"/>
         <q-route-tab to="/filesharing" label="File Sharing" icon="attach_file" />
       </q-tabs>
@@ -53,10 +54,11 @@ export default {
      }),
      title (){
          let currentPath = this.$route.fullPath;
-         if (currentPath === '/') return 'IPFS - Chat';
+         if (currentPath === '/') return 'IPFS - NewsFeed';
          else if (currentPath === '/chat') return this.selectedPeer === 'global'? "Global Chat": `Chat with ${this.mapNodeIDToName(this.selectedPeer)}`;
+         else if (currentPath === '/peers') return 'Peers to Chat with';
          else if(currentPath === '/filesharing' ) return 'IPFS - FileSharing';
-         else if(currentPath === '/profile' ) return 'IPFS - FileSharing';
+         else if(currentPath === '/profile' ) return 'Your Profile';
          return 'Fehler';
      }
  },

@@ -4,6 +4,8 @@
   <q-page
     ref="pageChat"
     class="page-chat flex column">
+
+
     <div
       class="q-pa-md fixed-top-right z-top q-mt-xl"
      >
@@ -37,6 +39,8 @@
         :sent="message.from == myID|| message.from == myName"
       />
     </div>
+
+
 
 
     <q-footer elevated>
@@ -88,7 +92,7 @@
       return{
           newMessage: '',
           model: null,
-          showMessages: false
+          showMessages: false,
 
       }
 
@@ -102,7 +106,7 @@
         ...mapGetters({
             allMessages: 'DataStore/messageGetter',
             peers: 'DataStore/peerGetter',
-            IPFSChatInstance: 'DataStore/IPFSChatInstanceGetter',
+            IPFSInstance: 'DataStore/IPFSInstanceGetter',
             myID: 'DataStore/myIDGetter',
             myName:'DataStore/myNameGetter',
             currentMsg: 'DataStore/currentMsgGetter',
@@ -117,13 +121,17 @@
           someAction: 'DataStore/someAction',
           instantiateIPFS: 'DataStore/instantiateIPFS',
           intervallIPFS: 'DataStore/intervallIPFS',
-          uploadFile: 'DataStore/uploadFile'
+          uploadFileToSelectedPeer: 'DataStore/uploadFileToSelectedPeer'
       }),
 
-        uploadFiletoIPFS(){
+        open (position) {
+            this.position = position
+            this.dialog = true
+        },
 
-            this.uploadFile(this.model);
-            //this.model = "";
+
+        uploadFiletoIPFS(){
+            this.uploadFileToSelectedPeer(this.model, [this.selectedPeer]);
         },
 
 
@@ -132,9 +140,9 @@
 
                 console.log("selectedPeer: " + this.selectedPeer);
                 if (this.selectedPeer == 'global')
-                    this.IPFSChatInstance.sendNewMsg('global', this.newMessage);
+                    this.IPFSInstance.sendNewMsg('global', this.newMessage);
                 else
-                    this.IPFSChatInstance.sendNewMsg('private-chat', `${this.selectedPeer}:${this.newMessage}`);
+                    this.IPFSInstance.sendNewMsg('private-chat', `${this.selectedPeer}:${this.newMessage}`);
                 this.newMessage = '';
                 this.$refs.newMessage.focus()
                 this.scrollToBottom()
@@ -155,17 +163,18 @@
                 if (Object.keys(val).length) {
                     this.scrollToBottom()
                 }
-            }
+            },
         },
 
+
     created () {
-        if(!this.IPFSChatInstance){
+        if(!this.IPFSInstance){
             this.instantiateIPFS();
             this.someAction();
         }
     },
     mounted() {
-        if(!this.IPFSChatInstance)
+        if(!this.IPFSInstance)
         this.intervallIPFS();
     }
 }
