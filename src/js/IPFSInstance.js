@@ -27,8 +27,8 @@ async function IPFSInstance() {
             //  "/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star"
             // "/dns4/ws-star-signal-1.servep2p.com/tcp/443/wss/p2p-websocket-star/"
             // '/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star'
-           '/ip4/127.0.0.1/tcp/13579/wss/p2p-webrtc-star',
-            // '/dns4/96291949.ngrok.io/tcp/80/ws/p2p-webrtc-star/'
+          // '/ip4/127.0.0.1/tcp/13579/wss/p2p-webrtc-star',
+            '/dns4/5ab5c241.ngrok.io/tcp/80/ws/p2p-webrtc-star/'
 
 
             // '/ip4/192.168.178.82/tcp/13579/wss/p2p-webrtc-star'
