@@ -4,6 +4,8 @@ import { saveAs } from 'file-saver';
 const Buffer = BufferPackage.Buffer;
 const BufferList = require('bl/BufferList');
 const all = require('it-all')
+const Room = require('ipfs-pubsub-room')
+
 
 
 
@@ -28,7 +30,8 @@ async function IPFSInstance() {
             // "/dns4/ws-star-signal-1.servep2p.com/tcp/443/wss/p2p-websocket-star/"
             // '/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star'
           // '/ip4/127.0.0.1/tcp/13579/wss/p2p-webrtc-star',
-            '/dns4/5ab5c241.ngrok.io/tcp/80/ws/p2p-webrtc-star/'
+           // '/dns4/5ab5c241.ngrok.io/tcp/80/ws/p2p-webrtc-star/'
+           '/ip4/185.113.124.221/tcp/13579/ws/p2p-webrtc-star/'
 
 
             // '/ip4/192.168.178.82/tcp/13579/wss/p2p-webrtc-star'
@@ -43,8 +46,24 @@ async function IPFSInstance() {
       },
     });
 
+   const room = new Room(node, 'global');
+
+  room.on('peer joined', (peer) => {
+    console.log('Peer joined the room', peer)
+  })
+
+  room.on('peer left', (peer) => {
+    console.log('Peer left...', peer)
+  })
+
+// now started to listen to room
+  room.on('subscribed', () => {
+    console.log('Now connected!')
+  })
 
 
+
+// When a peer joins the topic
 
     async function uploadFile(fileName, fileContent){
 
@@ -94,22 +113,23 @@ async function IPFSInstance() {
       node.pubsub.subscribe(topic, receiveMsg)
      console.log(`Subscribed to workspace ${topic}`)
 
+
   };
 
-    async function getPeers(topic) {
+     const getPeers = async (topic) => {
 
 
-      let peers = await node.pubsub.peers(topic);
-      return await peers;
+       const peerIds = await  node.pubsub.peers(topic);
 
-    }
+       return peerIds;
+
+    };
 
 
    async  function sendNewMsg(topic, newMsg) {
 
 
 
-        console.log("Message is beeing send!");
         //console.log('sendNewMsg received: ', newMsg)
         const msg = Buffer.from(newMsg);
 
@@ -188,6 +208,11 @@ async function IPFSInstance() {
   async function swarmAdresses() {
 
       return await node.swarm.addrs()
+
+  }
+
+  async function destroy() {
+
 
   }
 

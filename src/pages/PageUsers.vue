@@ -60,6 +60,7 @@
 
 <script>
     import {mapGetters, mapActions, mapMutations} from 'vuex'
+    import IPFSInstance from "../js/IPFSInstance";
 
     export default {
         data() {
@@ -105,6 +106,8 @@
         },
         mounted() {
             this.intervallIPFS();
+        },
+        beforeDestroy() {
         }
 
     }

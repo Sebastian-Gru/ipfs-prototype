@@ -167,8 +167,12 @@ export function intervallIPFS({commit, state}) {
 
   try {
     setInterval(async () => {
+      let peersComing = [];
 
-      let peersComing = await state.IPFSInstance.getPeers('global');
+       peersComing =  await state.IPFSInstance.getPeers('name-service');
+
+      // console.log("peersComing")
+      // console.log(peersComing)
 
       if (peersComing && peersComing.length) {
 
@@ -180,9 +184,6 @@ export function intervallIPFS({commit, state}) {
           //else i have peers and i am not gonna empty them => adding the new ones only.
           let existingPeers = state.peers.slice();
           let existingPeersIDs = existingPeers.map(peer => peer.nodeid);
-
-          console.log("We are here!");
-          console.log(peersComing);
 
 
           existingPeers.forEach((x) => {
@@ -209,7 +210,7 @@ export function intervallIPFS({commit, state}) {
         }
 
 
-    }, 10000);
+    }, 2000);
   } catch (error) {
     console.warn(error);
   }
@@ -260,7 +261,6 @@ export function uploadFileToSelectedPeer ({commit, state}, model) {
 export  async function swarmAdresses({commit, state}) {
 
   const swarmAdresses = await state.IPFSInstance.swarmAdresses();
-  console.log(swarmAdresses);
 
   commit( 'swarmAdressesCommit', swarmAdresses)
 
