@@ -155,6 +155,16 @@
 
           },
         },
+        created () {
+            if(!this.IPFSInstance){
+                this.instantiateIPFS();
+                this.someAction();
+            }
+        },
+        mounted() {
+            if(!this.IPFSInstance)
+                this.intervallIPFS();
+        }
     };
 </script>
 <style lang="sass">

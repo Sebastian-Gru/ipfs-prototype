@@ -133,7 +133,8 @@ async function IPFSInstance() {
         //console.log('sendNewMsg received: ', newMsg)
         const msg = Buffer.from(newMsg);
 
-        return await node.pubsub.publish(topic, msg)
+        //return await node.pubsub.publish(topic, msg)
+        node.pubsub.publish(topic, msg)
 
 
 
@@ -210,9 +211,31 @@ async function IPFSInstance() {
       return await node.swarm.addrs()
 
   }
+  async function reconnect(addr) {
 
-  async function destroy() {
+     const multiadress = `/ip4/185.113.124.221/tcp/13579/ws/p2p-webrtc-star/p2p/${addr}`
 
+    await node.swarm.connect(multiadress).catch(() => {
+      console.log('Reconnect is not possible');
+    })
+  }
+
+  async function stats() {
+     let returnObjects = [];
+     for await (const stats of node.stats.bw()) {
+      console.log(stats)
+       returnObjects.push(stats);
+    }
+    // for await (const stats of node.bitswap.stat()) {
+    //   console.log(stats)
+    //   returnObjects.push(stats);
+    // }
+    // for await (const stats of node.stats.repo()) {
+    //   console.log(stats)
+    //   returnObjects.push(stats);
+    // }
+
+    return returnObjects;
 
   }
 
@@ -226,7 +249,9 @@ async function IPFSInstance() {
         uploadFile,
         getFile,
         getFile2,
-        swarmAdresses
+        swarmAdresses,
+        stats,
+        reconnect
     }
 }
 

@@ -31,6 +31,8 @@ export async function instantiateIPFS({commit, state}){
 
    state.IPFSInstance.newSubscribe('file-sharing-2-by-sebastian', myOwnFileHandler);
 
+  state.IPFSInstance.newSubscribe('peerIsStillOnline' , onlineHandler);
+
 
 
 
@@ -82,6 +84,11 @@ export async function instantiateIPFS({commit, state}){
     //console.log("Peers!!: "+ peers);
     commit('peerName', msg)
 
+
+  };
+  function  onlineHandler (msg)  {
+
+    commit('pingArrayCommiter', msg)
 
   };
 
@@ -171,9 +178,6 @@ export function intervallIPFS({commit, state}) {
 
        peersComing =  await state.IPFSInstance.getPeers('name-service');
 
-      // console.log("peersComing")
-      // console.log(peersComing)
-
       if (peersComing && peersComing.length) {
 
         //if i have no peers accept everything
@@ -181,36 +185,11 @@ export function intervallIPFS({commit, state}) {
           commit('peerChange',  peersComing.map(peerID => ({ name: '', nodeid: peerID, online: true, checked: false })))
 
         }else {
-          //else i have peers and i am not gonna empty them => adding the new ones only.
-          let existingPeers = state.peers.slice();
-          let existingPeersIDs = existingPeers.map(peer => peer.nodeid);
-
-
-          existingPeers.forEach((x) => {
-            if (!peersComing.includes(x.nodeid)) {
-             x.online = false;
-            }
-          });
-
-
-          peersComing.forEach(peerID => {
-            if (existingPeersIDs.indexOf(peerID) === -1) {
-              existingPeers.push({ name: '', nodeid: peerID, online: true, checked: false })
-            }
-          });
-          existingPeers.sort(function(a, b){
-            return b.online-a.online
-          })
-
-          if(state.peers !== existingPeers)
-            commit('peerChange',  existingPeers)
-
+            commit('peerChange2',  peersComing)
+        }
         }
 
-        }
-
-
-    }, 2000);
+    }, 25000);
   } catch (error) {
     console.warn(error);
   }
@@ -219,6 +198,14 @@ export function intervallIPFS({commit, state}) {
     if (state.myName)
       state.IPFSInstance.sendNewMsg('name-service', state.myName)
   }, 50000)
+
+
+  //Send alive Signal
+  setInterval(() => {
+      state.IPFSInstance.sendNewMsg('peerIsStillOnline', 'x')
+  }, 3000)
+
+
 
 }
 
@@ -263,6 +250,14 @@ export  async function swarmAdresses({commit, state}) {
   const swarmAdresses = await state.IPFSInstance.swarmAdresses();
 
   commit( 'swarmAdressesCommit', swarmAdresses)
+
+}
+
+export  async function statsBtn({commit, state}) {
+
+  const stats = await state.IPFSInstance.stats();
+
+  commit('statsCommit', stats)
 
 }
 
@@ -326,6 +321,26 @@ export async function simpleUpload({commit, state}, model) {
   return await hashReturn[1];
 
 }
+
+export async function reconnectToPeers({commit, state}){
+
+
+  state.peers.forEach( x => {
+    if(!x.online){
+      state.IPFSInstance.reconnect(x.nodeid)
+      console.log(x.nodeid)
+    }
+      });
+
+  Notify.create({
+    message: `Trying to reconnect to all Offline peers (can take up to 25 seconds)!`,
+    position: "bottom"
+  });
+
+}
+
+
+
 
 
 

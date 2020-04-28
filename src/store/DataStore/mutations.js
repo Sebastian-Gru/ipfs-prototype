@@ -27,6 +27,46 @@ export const peerChange = (state, newPeers) => {
   state.peers = newPeers;
 
 }
+export const peerChange2 = (state, peersComing) => {
+
+
+  //else i have peers and i am not gonna empty them => adding the new ones only.
+  let existingPeers = state.peers;
+  existingPeers.slice();
+  let existingPeersIDs = existingPeers.map(peer => peer.nodeid);
+
+
+  // existingPeers.map((x) => {
+  //   if (!peersComing.includes(x.nodeid)) {
+  //    x.online = false;
+  //   }
+  // });
+  existingPeers.forEach((x) => {
+    if (!state.pingArray.includes(x.nodeid)) {
+      x.online = false;
+    }
+      else {
+        x.online = true;
+      }
+  });
+
+
+
+
+  peersComing.forEach(peerID => {
+    if (existingPeersIDs.indexOf(peerID) === -1) {
+      existingPeers.push({ name: '', nodeid: peerID, online: true, checked: false })
+    }
+  });
+  existingPeers.sort(function(a, b){
+    return b.online-a.online
+  })
+
+  if(state.peers !== existingPeers)
+   state.peers = existingPeers;
+   state.pingArray = [];
+
+}
 
 export const changeChecked = (state, user) => {
 
@@ -206,7 +246,19 @@ export const swarmAdressesCommit = (state, swarmAdresses) => {
     }
   );
 };
+export const statsCommit = (state, stats) => {
 
+  state.stats = stats;
+};
+
+export const pingArrayCommiter = (state, newPing) => {
+  if (!state.pingArray.includes(newPing.from))
+      state.pingArray.push(newPing.from);
+};
+
+export const clearPingArray = (state) => {
+  state.pingArray = [];
+};
 
 
 

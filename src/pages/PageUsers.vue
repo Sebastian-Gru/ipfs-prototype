@@ -51,6 +51,9 @@
         <div class="text-h6">Your name:</div>
         {{myComputedName? myComputedName: "Anonym"}}
       </q-card-section>
+      <q-card-section class="q-pt-none">
+       <q-btn label="Reconnect!"  @click="reconnectToPeers" />
+      </q-card-section>
 
 
     </q-card>
@@ -81,17 +84,16 @@
         methods: {
             ...mapActions({
                 instantiateIPFS: 'DataStore/instantiateIPFS',
-                intervallIPFS: 'DataStore/intervallIPFS'
+                intervallIPFS: 'DataStore/intervallIPFS',
+                reconnectToPeers: 'DataStore/reconnectToPeers'
             }),
             ...mapMutations({
                 myName: 'DataStore/myNameChange',
                 changeSelectedPeer: 'DataStore/changeSelectedPeer'
             }),
 
-            onSubmit() {
-                if (this.name != "")
-                    this.myName(this.name);
-                this.name = "";
+            reconnect() {
+                alert("Hello");
             },
             changePeer(x) {
                 console.log("User: " + x);

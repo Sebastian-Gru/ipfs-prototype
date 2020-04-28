@@ -39,6 +39,7 @@ export default function () {
     currentMsg: '',
     selectedPeer: 'global',
     swarmAdresses: null,
+    pingArray: []
 
   }
 }
