@@ -46,7 +46,7 @@
             v-model="newMessage"
             @blur="scrollToBottom"
             ref="newMessage"
-            bg-color="white"
+            :bg-color="this.$q.dark.isActive? 'dark grey': 'white'"
             outlined
             rounded
             label="Write a public Post"
@@ -187,6 +187,7 @@
                 this.instantiateIPFS();
                 this.someAction();
             }
+
         },
         mounted() {
             if(!this.IPFSInstance)

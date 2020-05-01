@@ -54,7 +54,7 @@
             v-model="newMessage"
             @blur="scrollToBottom"
             ref="newMessage"
-            bg-color="white"
+            :bg-color="this.$q.dark.isActive? 'dark grey': 'white'"
             outlined
             rounded
             label="Message"

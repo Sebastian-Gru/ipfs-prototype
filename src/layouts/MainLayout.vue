@@ -73,6 +73,9 @@ export default {
                 return nodeid.slice(nodeid.length - 5);
             } else return nodeid;
         }
+    },
+    created() {
+        this.$q.dark.set('auto') // or false or "auto"
     }
 }
 </script>
