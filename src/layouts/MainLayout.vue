@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
-      <q-toolbar>
+      <q-toolbar class="row">
 
         <q-btn
           v-if="$route.meta.back"
@@ -9,11 +9,19 @@
           flat
           dense
           label="Back" />
-
+        <q-space />
         <q-toolbar-title class="absolute-center">
           {{ title }}
         </q-toolbar-title>
 
+          <q-space />
+          <b>
+            <q-toggle
+              color="yellow"
+              toggle-indeterminate v-model="darkmode"
+              :label="this.darkmode == null? 'Auto' : this.darkmode? 'On': 'Off'"
+              left-label/>
+          </b>
 
       </q-toolbar>
 
@@ -45,6 +53,11 @@
 import {mapGetters} from 'vuex'
 
 export default {
+    data () {
+        return{
+            darkmode: null
+        }
+    },
 
  computed: {
      ...mapGetters({
@@ -74,8 +87,11 @@ export default {
             } else return nodeid;
         }
     },
-    created() {
-        this.$q.dark.set('auto') // or false or "auto"
+    // created() {
+    //     this.$q.dark.set(this.darkmode == null? 'auto' : this.darkmode) // or false or "auto"
+    // },
+    beforeUpdate() {
+        this.$q.dark.set(this.darkmode == null? 'auto' : this.darkmode) // or false or "auto"
     }
 }
 </script>
