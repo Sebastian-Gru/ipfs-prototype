@@ -1,6 +1,6 @@
 # ipfs-prototype (ipfs-prototype)
 
-An IPFS Chat-App
+An IPFS Social Network Prototype
 
 ## Install the dependencies
 ```bash
