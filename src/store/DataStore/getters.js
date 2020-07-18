@@ -1,63 +1,38 @@
-
-export function userListGetter (state) {
-
-     return state.userList
-
+export function userListGetter(state) {
+  return state.userList;
 }
 
-export function messageGetter (state) {
-
-  return state.allMessages
-
+export function messageGetter(state) {
+  return state.allMessages;
 }
 
-export function peerGetter (state) {
-
-  return state.peers
-
+export function peerGetter(state) {
+  return state.peers;
 }
-export function IPFSInstanceGetter (state) {
-
-  return state.IPFSInstance
-
+export function IPFSInstanceGetter(state) {
+  return state.IPFSInstance;
 }
 
 export function myIDGetter(state) {
-
-  return state.myID
-
+  return state.myID;
 }
 export function myNameGetter(state) {
-
-  return state.myName
-
+  return state.myName;
 }
 export function currentMsgGetter(state) {
-
-  return state.currentMsg
-
+  return state.currentMsg;
 }
 export function selectedPeerGetter(state) {
-
-  return state.selectedPeer
-
+  return state.selectedPeer;
 }
 
 export function fileGetter(state) {
-
-  return state.allFiles
-
+  return state.allFiles;
 }
 
 export function swarmAdressesGetter(state) {
-  return state.swarmAdresses
+  return state.swarmAdresses;
 }
 export function statsGetter(state) {
   return state.stats;
 }
-
-
-
-
-
-

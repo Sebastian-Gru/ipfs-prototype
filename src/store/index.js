@@ -1,22 +1,22 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from "vue";
+import Vuex from "vuex";
 
 // we first import the module
-import DataStore from './DataStore'
+import DataStore from "./DataStore";
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
     modules: {
       // then we reference it
-      DataStore
+      DataStore,
     },
 
     // enable strict mode (adds overhead!)
     // for dev mode only
-    strict: process.env.DEV
-  })
+    strict: process.env.DEV,
+  });
 
   /*
     if we want some HMR magic for it, we handle
@@ -26,11 +26,11 @@ export default function (/* { ssrContext } */) {
   */
 
   if (process.env.DEV && module.hot) {
-    module.hot.accept(['./DataStore'], () => {
-      const newDataStore = require('./DataStore').default
-      Store.hotUpdate({ modules: { DataStore: newDataStore } })
-    })
+    module.hot.accept(["./DataStore"], () => {
+      const newDataStore = require("./DataStore").default;
+      Store.hotUpdate({ modules: { DataStore: newDataStore } });
+    });
   }
 
-  return Store
+  return Store;
 }
