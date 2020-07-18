@@ -5,8 +5,7 @@
     ref="pageFeed"
     class="page-chat flex column">
 
-    <div class="q-pa-md row items-start q-gutter-md justify-center" >
-
+    <div class="q-pa-xl row items-start q-gutter-md justify-center" >
     <div
       class="q-pa-md column col justify-end"
       id="Messages"
@@ -168,19 +167,9 @@
                 let pageChat = this.$refs.pageFeed.$el;
                 setTimeout(() => {
                     window.scrollTo(0, pageChat.scrollHeight);
-                }, 20);
+                }, 0);
             }
         },
-
-        watch: {
-            allMessages: function(val) {
-                if (Object.keys(val).length) {
-                    this.scrollToBottom()
-
-                }
-            }
-        },
-
 
         created () {
             if(!this.IPFSInstance){
@@ -192,6 +181,9 @@
         mounted() {
             if(!this.IPFSInstance)
                 this.intervallIPFS();
+        },
+        beforeUpdate() {
+            this.scrollToBottom()
         }
     }
 </script>
