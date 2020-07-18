@@ -36,7 +36,7 @@
         :name="message.from"
         :stamp="message.date? message.date.slice(10): 'just now' "
         :text="[message.data]"
-        :sent="message.from == myID|| message.from == myName"
+        :sent="message.from === myID|| message.from === myName"
       />
     </div>
 
@@ -56,6 +56,7 @@
             ref="newMessage"
             :bg-color="this.$q.dark.isActive? 'dark grey': 'white'"
             outlined
+            autofocus
             rounded
             label="Message"
             dense>
@@ -125,8 +126,8 @@
       }),
 
         open (position) {
-            this.position = position
-            this.dialog = true
+            this.position = position;
+            this.dialog = true;
         },
 
 
@@ -136,10 +137,10 @@
 
 
         sendMessage() {
-            if (this.newMessage != '') {
+            if (this.newMessage !== '') {
 
                 console.log("selectedPeer: " + this.selectedPeer);
-                if (this.selectedPeer == 'global')
+                if (this.selectedPeer === 'global')
                     this.IPFSInstance.sendNewMsg('global', this.newMessage);
                 else
                     this.IPFSInstance.sendNewMsg('private-chat', `${this.selectedPeer}:${this.newMessage}`);

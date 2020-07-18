@@ -1,3 +1,5 @@
+<!--   The starting point of the chat page was achieved with a YouTube tutorial for a Quasar chat app-->
+<!--   The tutorial can be found here: https://www.youtube.com/watch?v=Kfg789g_UTg -->
 <template>
   <q-page class="flex q-pa-md">
 
@@ -63,8 +65,6 @@
 
 <script>
     import {mapGetters, mapActions, mapMutations} from 'vuex'
-    import IPFSInstance from "../js/IPFSInstance";
-
     export default {
         data() {
             return {

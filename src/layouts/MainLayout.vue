@@ -32,16 +32,13 @@
         dense
         animated
         v-if="$route.meta.tabs">
-        <q-route-tab to="/" label="Feed" icon="emoji_people"/>
-        <q-route-tab to="/peers" label="Chat" icon="chat"/>
+        <q-route-tab to="/feed" label="Feed" icon="emoji_people"/>
+        <q-route-tab to="/" label="Chat" icon="chat"/>
         <q-route-tab to="/profile" label="Profil" icon="person"/>
         <q-route-tab to="/filesharing" label="File Sharing" icon="attach_file" />
       </q-tabs>
 
     </q-header>
-
-
-
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -67,9 +64,9 @@ export default {
      }),
      title (){
          let currentPath = this.$route.fullPath;
-         if (currentPath === '/') return 'IPFS - NewsFeed';
+         if (currentPath === '/') return 'Peers to Chat with';
          else if (currentPath === '/chat') return this.selectedPeer === 'global'? "Global Chat": `Chat with ${this.mapNodeIDToName(this.selectedPeer)}`;
-         else if (currentPath === '/peers') return 'Peers to Chat with';
+         else if (currentPath === '/feed') return 'IPFS - NewsFeed';
          else if(currentPath === '/filesharing' ) return 'IPFS - FileSharing';
          else if(currentPath === '/profile' ) return 'Your Profile';
          return 'Fehler';
@@ -87,9 +84,9 @@ export default {
             } else return nodeid;
         }
     },
-    // created() {
-    //     this.$q.dark.set(this.darkmode == null? 'auto' : this.darkmode) // or false or "auto"
-    // },
+    created() {
+        this.$q.dark.set(this.darkmode == null? 'auto' : this.darkmode) // or false or "auto"
+    },
     beforeUpdate() {
         this.$q.dark.set(this.darkmode == null? 'auto' : this.darkmode) // or false or "auto"
     }

@@ -4,12 +4,12 @@ const routes = [
     component: () => import("layouts/MainLayout.vue"),
     children: [
       {
-        path: "",
+        path: "/feed",
         component: () => import("pages/Feed.vue"),
         meta: { tabs: true },
       },
       {
-        path: "/peers",
+        path: "",
         component: () => import("pages/PageUsers.vue"),
         meta: { tabs: true },
       },

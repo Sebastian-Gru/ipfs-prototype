@@ -22,7 +22,7 @@
         <div class="text-subtitle2">by User</div>
       </q-card-section>
         <q-separator v-if="message.img"/>
-        <img v-if="message.img" :src="message.img">
+        <img aria-label="Message" v-if="message.img" :src="message.img">
         <q-separator  />
       <q-card-section class="q-pt-md">
         {{ message.data }}
@@ -48,6 +48,7 @@
             ref="newMessage"
             :bg-color="this.$q.dark.isActive? 'dark grey': 'white'"
             outlined
+            autofocus
             rounded
             label="Write a public Post"
             dense>
@@ -95,7 +96,9 @@
 
 
 <script>
-    import {mapGetters, mapState, mapActions} from 'vuex'
+    import {mapGetters, mapActions} from 'vuex'
+    import Notify from "quasar/src/plugins/Notify";
+
     export default {
 
         data () {
@@ -106,11 +109,6 @@
             }
         },
         computed:  {
-
-            ...mapState({
-                //selectedPeer: state => state.selectedPeer,
-            }),
-
             ...mapGetters({
                 allMessages: 'DataStore/messageGetter',
                 peers: 'DataStore/peerGetter',
@@ -133,26 +131,23 @@
             }),
 
             open (position) {
-                this.position = position
+                this.position = position;
                 this.dialog = true
             },
 
 
             uploadFiletoIPFS(){
-
                 this.uploadFile(this.model);
-                //this.model = "";
-
             },
 
 
             async sendMessage() {
-                if (this.newMessage != '') {
+                if (this.newMessage !== '') {
 
                     let hash = "";
                     if(this.model){
 
-                       hash = await this.simpleUpload(this.model);
+                        hash = await this.simpleUpload(this.model);
                         console.log("selectedPeer: " + 'global');
                         await this.IPFSInstance.sendNewMsg('global', `${this.newMessage}:${hash}`);
 
@@ -160,14 +155,19 @@
                         await this.IPFSInstance.sendNewMsg('global', `${this.newMessage}`);
                     this.newMessage = '';
                     this.model = null;
-                    this.$refs.newMessage.focus()
-                    this.scrollToBottom()
-                }
+                    this.$refs.newMessage.focus();
+                    this.scrollToBottom();
+                }else
+                    Notify.create({
+                        message: `An Image cannot be sent without a message!`,
+                        position: "center",
+                        color: "info"
+                    });
             },
             scrollToBottom() {
-                let pageChat = this.$refs.pageFeed.$el
+                let pageChat = this.$refs.pageFeed.$el;
                 setTimeout(() => {
-                    window.scrollTo(0, pageChat.scrollHeight)
+                    window.scrollTo(0, pageChat.scrollHeight);
                 }, 20);
             }
         },

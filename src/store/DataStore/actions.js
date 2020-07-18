@@ -1,7 +1,6 @@
 import IPFSChat from "src/js/IPFSInstance";
 import Notify from "quasar/src/plugins/Notify";
 import Dialog from "quasar/src/plugins/Dialog";
-import Router from "../../router/index";
 
 //Hier soll IPFS Instanziiert werden.
 export async function instantiateIPFS({ commit, state }) {
@@ -14,9 +13,7 @@ export async function instantiateIPFS({ commit, state }) {
   commit("myIDcommit", myID.id);
 
   state.IPFSInstance.newSubscribe("global", globalMsgHandler);
-  //Neue Action aufrufen in global message Handler
   state.IPFSInstance.newSubscribe("name-service", nameServiceHandler);
-
   state.IPFSInstance.newSubscribe("private-chat", privateChatHandler);
 
   state.IPFSInstance.newSubscribe(
@@ -33,24 +30,12 @@ export async function instantiateIPFS({ commit, state }) {
 
   //Function that receives the messages
   async function globalMsgHandler(msg) {
-    console.log("msg");
-    console.log(msg);
-
     let receivedData = msg.data.toString().split(":");
 
     if (receivedData.length > 1) {
-      console.log("receivedData");
-      console.log(receivedData);
-
       const imgHash = receivedData[1];
 
-      console.log("imgHash");
-      console.log(imgHash);
-
-      const img = await IPFSInstance.getFile2(imgHash, "test.png");
-
-      console.log("ImageBlob:");
-      console.log(img);
+      const img = await IPFSInstance.uploadGlobalFeedFile(imgHash);
 
       commit("messageCommiter", { msg, img });
     } else {
@@ -69,7 +54,6 @@ export async function instantiateIPFS({ commit, state }) {
 
   //Function that receives the names of the peers that have names
   function nameServiceHandler(msg) {
-    //console.log("Peers!!: "+ peers);
     commit("peerName", msg);
   }
   function onlineHandler(msg) {
@@ -77,7 +61,6 @@ export async function instantiateIPFS({ commit, state }) {
   }
 
   //private Message Handler
-
   function privateChatHandler(msg) {
     commit("privateMessageCommiter", msg);
   }
@@ -87,7 +70,7 @@ export async function instantiateIPFS({ commit, state }) {
     const receivedData = msg.data.toString().split(":");
 
     if (msg.from !== state.myID) {
-      if (receivedData[2] == state.myID) {
+      if (receivedData[2] === state.myID) {
         let hash = receivedData[0];
         let name = receivedData[1];
         receivedData.push(msg.from);
@@ -116,8 +99,6 @@ export async function instantiateIPFS({ commit, state }) {
   }
 
   function myOwnMessageHandler(msg) {
-    //hier kommt hoffentlich der Hash an.
-    console.log("myOwnMessageHandler::: " + msg.data.toString());
     let data = msg.data.toString();
     let hash = data.split(":")[0];
     let name = data.slice(data.split(":")[0].length + 1);
@@ -148,9 +129,7 @@ export async function instantiateIPFS({ commit, state }) {
 export function intervallIPFS({ commit, state }) {
   try {
     setInterval(async () => {
-      let peersComing = [];
-
-      peersComing = await state.IPFSInstance.getPeers("name-service");
+      let peersComing = await state.IPFSInstance.getPeers("name-service");
 
       if (peersComing && peersComing.length) {
         //if i have no peers accept everything
@@ -185,23 +164,16 @@ export function intervallIPFS({ commit, state }) {
 }
 
 export function uploadFileToSelectedPeer({ commit, state }, model) {
-  console.log(state.selectedPeer);
-
   async function uploadFunc() {
     let hashReturn = await state.IPFSInstance.uploadFile(
       `file.${Math.random()}`,
       model
     );
 
-    console.log("FileHash: " + hashReturn[1]);
-
     await state.IPFSInstance.sendNewMsg(
       "file-sharing-2-by-sebastian",
       `${hashReturn[1]}:${model.name}:${state.selectedPeer}`
     );
-
-    //state.IPFSInstance.getFile(hashReturn[1]);
-
     return hashReturn[0];
   }
 
@@ -251,8 +223,6 @@ export function uploadFileToSharingPannel({ commit, state }, model) {
       model
     );
 
-    console.log("FileHash: " + hashReturn[1]);
-
     return hashReturn[1];
   }
 
@@ -289,7 +259,6 @@ export async function reconnectToPeers({ commit, state }) {
   state.peers.forEach((x) => {
     if (!x.online) {
       state.IPFSInstance.reconnect(x.nodeid);
-      console.log(x.nodeid);
     }
   });
 

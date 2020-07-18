@@ -1,42 +1,19 @@
 import Notify from "quasar/src/plugins/Notify";
-import Dialog from "quasar/src/plugins/Dialog";
 
-export const updateUserList = (state, newUserList) => {
-  state.userList = newUserList;
-};
-
-export const test = (state, x) => {
-  //console.log("Test " + x);
-};
 export const ipfsInstance = (state, ipfs, id) => {
-  console.log("This is state " + state);
-  console.log("This is ipfs " + state);
-  console.log("This is id " + id);
   state.IPFSInstance = ipfs;
   state.myID = id;
-  console.log("My ID: " + state.myID);
 };
 
 export const peerChange = (state, newPeers) => {
   state.peers = newPeers;
 };
 export const peerChange2 = (state, peersComing) => {
-  //else i have peers and i am not gonna empty them => adding the new ones only.
   let existingPeers = state.peers;
   existingPeers.slice();
   let existingPeersIDs = existingPeers.map((peer) => peer.nodeid);
-
-  // existingPeers.map((x) => {
-  //   if (!peersComing.includes(x.nodeid)) {
-  //    x.online = false;
-  //   }
-  // });
   existingPeers.forEach((x) => {
-    if (!state.pingArray.includes(x.nodeid)) {
-      x.online = false;
-    } else {
-      x.online = true;
-    }
+    x.online = state.pingArray.includes(x.nodeid);
   });
 
   peersComing.forEach((peerID) => {
@@ -60,8 +37,7 @@ export const peerChange2 = (state, peersComing) => {
 export const changeChecked = (state, user) => {
   let peers = state.peers.slice();
   peers.forEach((peer) => {
-    if (peer.nodeid == user) {
-      console.log(peer.checked);
+    if (peer.nodeid === user) {
       peer.checked = !peer.checked;
     }
   });
@@ -96,17 +72,12 @@ export const messageCommiter = (state, { msg, img }) => {
     currentDate.getMonth() + 1
   }-${currentDate.getFullYear()}    ${currentDate.getHours()}:${currentDate.getMinutes()}`;
 
-  console.log("This is image");
-  console.log(img);
-
   newMessages["global"].push({
     from: msg.from,
     data: msg.data.toString().split(":")[0],
     date: dateString,
     img: img,
   });
-
-  // state.allMessages = newMessages;
 };
 
 export const peerName = (state, msg) => {
@@ -115,7 +86,7 @@ export const peerName = (state, msg) => {
 
   let peers = state.peers.slice();
   peers.forEach((peer) => {
-    if (peer.name == "" && peer.nodeid == senderID) {
+    if (peer.name === "" && peer.nodeid === senderID) {
       peer.name = senderName;
     }
   });
@@ -123,8 +94,6 @@ export const peerName = (state, msg) => {
 };
 
 export const myNameChange = (state, myName) => {
-  console.log("myName: " + myName);
-
   state.myName = myName;
 };
 
@@ -139,22 +108,9 @@ export const privateMessageCommiter = (state, msg) => {
   let data = msg.data.toString();
   let receiverID = data.split(":")[0];
   let theMsg = data.slice(data.split(":")[0].length + 1);
-  console.log(
-    "Data:" +
-      data +
-      " " +
-      "| receiverID: " +
-      receiverID +
-      " " +
-      "| theMsg: " +
-      theMsg
-  );
-
   const myID = state.myID;
-  console.log("my ID: " + state.myID + " senderID: " + senderID);
-
   // if someone send a message for me
-  if (receiverID == myID) {
+  if (receiverID === myID) {
     let existingAllMessags = Object.assign({}, state.allMessages);
 
     if (!existingAllMessags[senderID]) existingAllMessags[senderID] = [];
@@ -186,7 +142,7 @@ export const privateMessageCommiter = (state, msg) => {
   }
 
   // if i'm the sender
-  else if (senderID == myID) {
+  else if (senderID === myID) {
     let existingAllMessags = Object.assign({}, state.allMessages);
 
     if (!existingAllMessags[receiverID]) existingAllMessags[receiverID] = [];
@@ -203,21 +159,16 @@ export const privateMessageCommiter = (state, msg) => {
       mine: true,
     });
 
-    console.log(state.allMessages[state.selectedPeer]);
     state.allMessages = existingAllMessags;
   }
 };
 
 const mapNodeIDToName = (nodeid, peers) => {
   for (let i = peers.length - 1; i >= 0; i--) {
-    if (peers[i]["nodeid"] == nodeid && peers[i]["name"].length > 0)
+    if (peers[i]["nodeid"] === nodeid && peers[i]["name"].length > 0)
       return peers[i]["name"];
   }
   return nodeid;
-};
-
-const changeSelected = (selected) => {
-  console.log(selected);
 };
 
 export const swarmAdressesCommit = (state, swarmAdresses) => {
@@ -236,8 +187,4 @@ export const statsCommit = (state, stats) => {
 export const pingArrayCommiter = (state, newPing) => {
   if (!state.pingArray.includes(newPing.from))
     state.pingArray.push(newPing.from);
-};
-
-export const clearPingArray = (state) => {
-  state.pingArray = [];
 };
