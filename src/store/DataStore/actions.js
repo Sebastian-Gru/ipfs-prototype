@@ -147,7 +147,7 @@ export function intervallIPFS({ commit, state }) {
           commit("peerChange2", peersComing);
         }
       }
-    }, 25000);
+    }, 35000);
   } catch (error) {
     console.warn(error);
   }
