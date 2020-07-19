@@ -100,7 +100,7 @@ async function IPFSInstance() {
     return await node.swarm.addrs();
   }
   async function reconnect(addr) {
-    const multiadress = `/dns4/ipfs-webrtc-signalling.herokuapp.com/tcp/443/wss/p2p-webrtc-star/",
+    const multiadress = `/dns4/ipfs-webrtc-signalling.herokuapp.com/tcp/443/wss/p2p-webrtc-star/
 ${addr}`;
 
     await node.swarm.connect(multiadress).catch(() => {
