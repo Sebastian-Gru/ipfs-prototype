@@ -34,7 +34,7 @@
         v-if="$route.meta.tabs">
         <q-route-tab to="/feed" label="Feed" icon="emoji_people"/>
         <q-route-tab to="/" label="Chat" icon="chat"/>
-        <q-route-tab to="/profile" label="Profil" icon="person"/>
+        <q-route-tab to="/profile" label="Profile" icon="person"/>
         <q-route-tab to="/filesharing" label="File Sharing" icon="attach_file" />
       </q-tabs>
 
